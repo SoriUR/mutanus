@@ -2,7 +2,7 @@ import Foundation
 import ArgumentParser
 
 @available(OSX 10.13, *)
-struct Mutanus: ParsableCommand {
+struct Entry: ParsableCommand {
 
     @Option(name: .shortAndLong, help: "Path to project root")
     var directory: String?
@@ -24,36 +24,34 @@ struct Mutanus: ParsableCommand {
         let mapped = files.map { "-only-testing:\(scheme)-Unit-Tests/\($0)" }
 
         print("""
-                root: \(resultDirectory)
+                directory: \(resultDirectory)
                 executable: \(executable)
                 workspace: \(workspace)
                 scheme: \(scheme)
                 command: \(executable) test -workspace \(workspace).xcworkspace -scheme \(scheme) -destination "platform=iOS Simulator,name=iPhone 8" \(mapped.joined(separator: " "))
             """)
 
-        let logFilePath = resultDirectory + "/logFile.txt"
-        FileManager.default.createFile(atPath: logFilePath, contents: nil)
-        let fileURL = URL(fileURLWithPath: logFilePath)
-        let fileHandle = try FileHandle(forWritingTo: fileURL)
+        let mutanus = Mutanus(parameters: .init(
+            directory: resultDirectory,
+            executable: executable,
+            arguments: [
+                "test",
+                "-workspace",
+                "\(workspace).xcworkspace",
+                "-scheme", "\(scheme)",
+                "-destination",
+                "platform=iOS Simulator,name=iPhone 8"
+            ] + mapped,
+            files: files
+        ))
 
-
-        let process = Process()
-        process.arguments = [
-            "test", "-workspace", "\(workspace).xcworkspace", "-scheme", "\(scheme)", "-destination", "platform=iOS Simulator,name=iPhone 8"
-        ] + mapped
-        process.executableURL = URL(fileURLWithPath: executable)
-        process.standardOutput = fileHandle
-        process.standardError = fileHandle
-
-        try process.run()
-        process.waitUntilExit()
-        fileHandle.closeFile()
+        try mutanus.start()
     }
 }
 
 // MARK: - Validation
 @available(OSX 10.13, *)
-extension Mutanus {
+extension Entry {
     func validate() throws {
         try validateDirectory(directory)
         try validateExecutable(executable)
@@ -89,7 +87,7 @@ extension Mutanus {
 
 
 if #available(macOS 10.13, *) {
-    Mutanus.main()
+    Entry.main()
 } else {
-    print("Hello World")
+    print("macOS versions under 10.13 are not supported")
 }
