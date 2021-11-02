@@ -23,14 +23,17 @@ struct Entry: ParsableCommand {
         let mapped = files.map { "-only-testing:\(scheme)-Unit-Tests/\($0)" }
 
         print("""
-                directory: \(resultDirectory)
-                executable: \(executable)
-                workspace: \(workspace)
-                scheme: \(scheme)
-                command: \(executable) test -workspace \(workspace).xcworkspace -scheme \(scheme) -destination "platform=iOS Simulator,name=iPhone 8" \(mapped.joined(separator: " "))
-            """)
 
-        let mutanus = Mutanus(parameters: .init(
+            --- Parameters ---
+
+            directory: \(resultDirectory)
+            executable: \(executable)
+            workspace: \(workspace)
+            scheme: \(scheme)
+            command: \(executable) test -workspace \(workspace).xcworkspace -scheme \(scheme) -destination "platform=iOS Simulator,name=iPhone 8" \(mapped.joined(separator: " "))
+        """)
+
+        let parameters = MutationParameters(
             directory: resultDirectory,
             executable: executable,
             arguments: [
@@ -42,7 +45,9 @@ struct Entry: ParsableCommand {
                 "platform=iOS Simulator,name=iPhone 8"
             ] + mapped,
             files: files
-        ))
+        )
+
+        let mutanus = Mutanus(parameters: parameters, executor: Executor())
 
         try mutanus.start()
     }
