@@ -1,7 +1,6 @@
 import Foundation
 import ArgumentParser
 
-@available(OSX 10.13, *)
 struct Entry: ParsableCommand {
 
     @Option(name: .shortAndLong, help: "Path to project root")
@@ -50,7 +49,6 @@ struct Entry: ParsableCommand {
 }
 
 // MARK: - Validation
-@available(OSX 10.13, *)
 extension Entry {
     func validate() throws {
         try validateDirectory(directory)
@@ -85,9 +83,4 @@ extension Entry {
     }
 }
 
-
-if #available(macOS 10.13, *) {
-    Entry.main()
-} else {
-    print("macOS versions under 10.13 are not supported")
-}
+Entry.main()
