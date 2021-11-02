@@ -47,7 +47,7 @@ struct Mutanus {
         let startTime = Date()
 
         for i in 0..<mutantsMaxCount {
-            Logger.logEvent(.mutationIterationStarted(index: i))
+            Logger.logEvent(.mutationIterationStarted(index: i+1))
 
             let info = try executor.executeProccess(with: parameters)
             let executionResult = ExecutionResultParser.recognizeResult(in: info.logURL)

@@ -78,6 +78,8 @@ enum Logger  {
             Mutants Count: \(total)
             Mutants Killed: \(killed)
             Mutants Survived: \(survived)
+            Mutation Score: \(Float(killed)/Float(survived))
+
         """
 
         printOutput(title: "Mutation Testing Result", content: content)
