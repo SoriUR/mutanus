@@ -35,6 +35,20 @@ struct Mutanus: ParsableCommand {
         FileManager.default.createFile(atPath: logFilePath, contents: nil)
         let fileURL = URL(fileURLWithPath: logFilePath)
         let fileHandle = try FileHandle(forWritingTo: fileURL)
+
+
+        let process = Process()
+        process.arguments = [
+            "test", "-workspace", "\(workspace).xcworkspace", "-scheme", "\(scheme)", "-destination", "platform=iOS Simulator,name=iPhone 8"
+        ] + mapped
+        process.executableURL = URL(fileURLWithPath: executable)
+        process.standardOutput = fileHandle
+        process.standardError = fileHandle
+
+        try process.run()
+        process.waitUntilExit()
+        fileHandle.closeFile()
+    }
 }
 
 // MARK: - Validation
