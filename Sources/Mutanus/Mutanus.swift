@@ -26,40 +26,33 @@ struct Mutanus {
 
     func start() throws {
 
+        Logger.logEvent(.referenceRunStart)
+
         let info = try executor.executeProccess(with: parameters)
         let executionResult = ExecutionResultParser.recognizeResult(in: info.logURL)
 
-        print("""
-
-            --- Reference Run ---
-
-            Duration: \(info.duration.rounded()) sec
-            Result: \(executionResult.pretty)
-        """)
+        Logger.logEvent(.referenceRunFinished(duration: info.duration, result: executionResult))
 
         guard executionResult == .testSucceeded else {
             fatalError("Module tests failed")
         }
-
 
         let mutantsMaxCount = Int.random(in: 2...5)
 
         var mutationResults = [ExecutionResult]()
         mutationResults.reserveCapacity(mutantsMaxCount)
 
+        Logger.logEvent(.mutationTestingStarted(count: mutantsMaxCount))
+
         let startTime = Date()
 
         for i in 0..<mutantsMaxCount {
+            Logger.logEvent(.mutationIterationStarted(index: i))
+
             let info = try executor.executeProccess(with: parameters)
             let executionResult = ExecutionResultParser.recognizeResult(in: info.logURL)
 
-            print("""
-
-                --- Mutation Run Number \(i+1) ---
-
-                Duration: \(info.duration.rounded()) sec
-                Result: \(executionResult.pretty)
-            """)
+            Logger.logEvent(.mutationIterationFinished(duration: info.duration, result: executionResult))
 
             mutationResults.append(executionResult)
         }
@@ -75,17 +68,7 @@ struct Mutanus {
             survivedCount += 1 - increment
         }
 
-        print("""
-
-            --- Mutation Result ---
-
-            Duration: \(duration.rounded()) sec
-            Mutants Count: \(mutantsMaxCount)
-            Mutants Killed: \(killedCount)
-            Mutants Survived: \(survivedCount)
-
-        """)
-
+        Logger.logEvent(.mutationTestingFinished(duration: duration, total: mutantsMaxCount, killed: killedCount, survived: survivedCount))
     }
 }
 
