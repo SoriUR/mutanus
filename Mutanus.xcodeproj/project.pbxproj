@@ -22,6 +22,8 @@
 
 /* Begin PBXBuildFile section */
 		4AA15F8B273183AA000BB6D0 /* ExecutionResultParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA15F8A273183AA000BB6D0 /* ExecutionResultParser.swift */; };
+		4AA15F8D2731871F000BB6D0 /* Executor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA15F8C2731871F000BB6D0 /* Executor.swift */; };
+		4AA15F8F27318DC9000BB6D0 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA15F8E27318DC9000BB6D0 /* Logger.swift */; };
 		OBJ_100 /* ParsedValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_46 /* ParsedValues.swift */; };
 		OBJ_101 /* ParserError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_47 /* ParserError.swift */; };
 		OBJ_102 /* SplitArguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_48 /* SplitArguments.swift */; };
@@ -126,6 +128,8 @@
 
 /* Begin PBXFileReference section */
 		4AA15F8A273183AA000BB6D0 /* ExecutionResultParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionResultParser.swift; sourceTree = "<group>"; };
+		4AA15F8C2731871F000BB6D0 /* Executor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Executor.swift; sourceTree = "<group>"; };
+		4AA15F8E27318DC9000BB6D0 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		"Mutanus::Mutanus::Product" /* Mutanus */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = Mutanus; sourceTree = BUILT_PRODUCTS_DIR; };
 		"Mutanus::MutanusTests::Product" /* MutanusTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = MutanusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -331,7 +335,7 @@
 			path = Usage;
 			sourceTree = "<group>";
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -342,7 +346,6 @@
 				OBJ_68 /* Build */,
 				OBJ_69 /* README.md */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_55 /* Utilities */ = {
@@ -390,6 +393,8 @@
 				OBJ_10 /* main.swift */,
 				OBJ_9 /* Mutanus.swift */,
 				4AA15F8A273183AA000BB6D0 /* ExecutionResultParser.swift */,
+				4AA15F8C2731871F000BB6D0 /* Executor.swift */,
+				4AA15F8E27318DC9000BB6D0 /* Logger.swift */,
 			);
 			name = Mutanus;
 			path = Sources/Mutanus;
@@ -512,7 +517,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_63 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -541,6 +546,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
+				4AA15F8F27318DC9000BB6D0 /* Logger.swift in Sources */,
+				4AA15F8D2731871F000BB6D0 /* Executor.swift in Sources */,
 				OBJ_127 /* Mutanus.swift in Sources */,
 				OBJ_128 /* main.swift in Sources */,
 				4AA15F8B273183AA000BB6D0 /* ExecutionResultParser.swift in Sources */,

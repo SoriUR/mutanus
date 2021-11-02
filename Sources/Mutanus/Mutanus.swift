@@ -14,37 +14,61 @@ struct MutationParameters {
 struct Mutanus {
 
     let parameters: MutationParameters
+    let executor: Executor
 
-    init(parameters: MutationParameters) {
+    init(
+        parameters: MutationParameters,
+        executor: Executor
+    ) {
         self.parameters = parameters
+        self.executor = executor
     }
 
     func start() throws {
-        let logFilePath = parameters.directory + "/logFile2.txt"
-        FileManager.default.createFile(atPath: logFilePath, contents: nil)
-        let fileURL = URL(fileURLWithPath: logFilePath)
-        let fileHandle = try FileHandle(forWritingTo: fileURL)
 
-        let process = Process()
-        process.arguments = parameters.arguments
-        process.executableURL = URL(fileURLWithPath: parameters.executable)
-        process.standardOutput = fileHandle
-        process.standardError = fileHandle
+        Logger.logEvent(.referenceRunStart)
+
+        let info = try executor.executeProccess(with: parameters)
+        let executionResult = ExecutionResultParser.recognizeResult(in: info.logURL)
+
+        Logger.logEvent(.referenceRunFinished(duration: info.duration, result: executionResult))
+
+        guard executionResult == .testSucceeded else {
+            fatalError("Module tests failed")
+        }
+
+        let mutantsMaxCount = Int.random(in: 2...5)
+
+        var mutationResults = [ExecutionResult]()
+        mutationResults.reserveCapacity(mutantsMaxCount)
+
+        Logger.logEvent(.mutationTestingStarted(count: mutantsMaxCount))
 
         let startTime = Date()
 
-        try process.run()
-        process.waitUntilExit()
+        for i in 0..<mutantsMaxCount {
+            Logger.logEvent(.mutationIterationStarted(index: i+1))
+
+            let info = try executor.executeProccess(with: parameters)
+            let executionResult = ExecutionResultParser.recognizeResult(in: info.logURL)
+
+            Logger.logEvent(.mutationIterationFinished(duration: info.duration, result: executionResult))
+
+            mutationResults.append(executionResult)
+        }
 
         let duration = startTime.distance(to: Date())
 
-        fileHandle.closeFile()
+        var survivedCount = 0
+        var killedCount = 0
 
-        let executionResult = ExecutionResultParser.recognizeResult(in: fileURL)
+        mutationResults.forEach { result in
+            let increment = result == .testFailed ? 1 : 0
+            killedCount += increment
+            survivedCount += 1 - increment
+        }
 
-        print("""
-            buildDuration: \(duration.rounded()) sec
-            executionResult: \(executionResult.pretty)
-            """)
+        Logger.logEvent(.mutationTestingFinished(duration: duration, total: mutantsMaxCount, killed: killedCount, survived: survivedCount))
     }
 }
+
