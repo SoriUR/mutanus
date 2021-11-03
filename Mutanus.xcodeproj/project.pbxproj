@@ -407,6 +407,40 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4A4CAF41273249B70003410B /* Operators */ = {
+			isa = PBXGroup;
+			children = (
+				4A4CAF2227322A3B0003410B /* ChangeLogicalConnectorOperator.swift */,
+				4A4CAF2327322A3B0003410B /* MutationOperator.swift */,
+				4A4CAF2627322A3B0003410B /* OperatorAwareRewriter.swift */,
+				4A4CAF2127322A3B0003410B /* RemoveSideEffectsOperator.swift */,
+				4A4CAF2727322A3B0003410B /* ROROperator.swift */,
+				4A4CAF2527322A3B0003410B /* TokenAwareVisitor.swift */,
+			);
+			path = Operators;
+			sourceTree = "<group>";
+		};
+		4A4CAF42273249D70003410B /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				4A4CAF3B27322AEA0003410B /* RegularExpressionExtensions.swift */,
+				4A4CAF3927322AD20003410B /* SequenceExtensions.swift */,
+				4A4CAF3727322AB40003410B /* StringExtensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		4A4CAF43273249E70003410B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4A4CAF2427322A3B0003410B /* MutationOperatorSnapshot.swift */,
+				4A4CAF2F27322A500003410B /* MutationPosition.swift */,
+				4A4CAF3127322A5C0003410B /* Nullable.swift */,
+				4A4CAF3327322A760003410B /* SourceInfo.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		OBJ_105 /* Parsable Types */ = {
 			isa = PBXGroup;
 			children = (
@@ -464,11 +498,11 @@
 			isa = PBXGroup;
 			children = (
 				OBJ_14 /* Common */,
+				OBJ_22 /* StepsSequence.swift */,
+				OBJ_21 /* ReferenceRunStep.swift */,
 				OBJ_18 /* ExtractSourceFilesStep.swift */,
 				OBJ_19 /* FindMutantsStep.swift */,
 				OBJ_20 /* MutationTestingStep.swift */,
-				OBJ_21 /* ReferenceRunStep.swift */,
-				OBJ_22 /* StepsSequence.swift */,
 			);
 			path = Steps;
 			sourceTree = "<group>";
@@ -508,19 +542,9 @@
 		OBJ_23 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				4A4CAF2F27322A500003410B /* MutationPosition.swift */,
-				4A4CAF2227322A3B0003410B /* ChangeLogicalConnectorOperator.swift */,
-				4A4CAF2327322A3B0003410B /* MutationOperator.swift */,
-				4A4CAF2427322A3B0003410B /* MutationOperatorSnapshot.swift */,
-				4A4CAF3727322AB40003410B /* StringExtensions.swift */,
-				4A4CAF3327322A760003410B /* SourceInfo.swift */,
-				4A4CAF2627322A3B0003410B /* OperatorAwareRewriter.swift */,
-				4A4CAF3B27322AEA0003410B /* RegularExpressionExtensions.swift */,
-				4A4CAF3927322AD20003410B /* SequenceExtensions.swift */,
-				4A4CAF3127322A5C0003410B /* Nullable.swift */,
-				4A4CAF2127322A3B0003410B /* RemoveSideEffectsOperator.swift */,
-				4A4CAF2727322A3B0003410B /* ROROperator.swift */,
-				4A4CAF2527322A3B0003410B /* TokenAwareVisitor.swift */,
+				4A4CAF42273249D70003410B /* Extensions */,
+				4A4CAF43273249E70003410B /* Models */,
+				4A4CAF41273249B70003410B /* Operators */,
 			);
 			path = ThirdParty;
 			sourceTree = "<group>";
