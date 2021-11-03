@@ -135,6 +135,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4A61A5BD2731F60E0069A2B4 /* MutationOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationOperator.swift; sourceTree = "<group>"; };
+		4A61A5BE2731F6150069A2B4 /* RemoveSideEffectsOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveSideEffectsOperator.swift; sourceTree = "<group>"; };
+		4A61A5BF2731F6150069A2B4 /* TokenAwareVisitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAwareVisitor.swift; sourceTree = "<group>"; };
+		4A61A5C02731F6150069A2B4 /* ROROperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROROperator.swift; sourceTree = "<group>"; };
+		4A61A5C12731F6280069A2B4 /* ChangeLogicalConnectorOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeLogicalConnectorOperator.swift; sourceTree = "<group>"; };
+		4A61A5C22731F62C0069A2B4 /* OperatorAwareRewriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorAwareRewriter.swift; sourceTree = "<group>"; };
 		4A61A5C52732121F0069A2B4 /* ReferenceRunStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceRunStep.swift; sourceTree = "<group>"; };
 		4A61A5C82732124E0069A2B4 /* ExtractSourceFilesStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractSourceFilesStep.swift; sourceTree = "<group>"; };
 		4A61A5CA273212690069A2B4 /* FindMutantsStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindMutantsStep.swift; sourceTree = "<group>"; };
@@ -234,6 +240,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4A61A5BC2731F5710069A2B4 /* ThirdParty */ = {
+			isa = PBXGroup;
+			children = (
+				4A61A5BE2731F6150069A2B4 /* RemoveSideEffectsOperator.swift */,
+				4A61A5C02731F6150069A2B4 /* ROROperator.swift */,
+				4A61A5BF2731F6150069A2B4 /* TokenAwareVisitor.swift */,
+				4A61A5C22731F62C0069A2B4 /* OperatorAwareRewriter.swift */,
+				4A61A5C12731F6280069A2B4 /* ChangeLogicalConnectorOperator.swift */,
+				4A61A5BD2731F60E0069A2B4 /* MutationOperator.swift */,
+			);
+			path = ThirdParty;
+			sourceTree = "<group>";
+		};
 		4A61A5C3273211F60069A2B4 /* Steps */ = {
 			isa = PBXGroup;
 			children = (
@@ -435,6 +454,7 @@
 				OBJ_10 /* main.swift */,
 				OBJ_9 /* Mutanus.swift */,
 				4A61A5C3273211F60069A2B4 /* Steps */,
+				4A61A5BC2731F5710069A2B4 /* ThirdParty */,
 			);
 			name = Mutanus;
 			path = Sources/Mutanus;
