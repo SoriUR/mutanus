@@ -32,7 +32,7 @@ final class FindMutantsStep: MutanusSequanceStep {
             result[path] = (source.code, mutationPoints)
         }
 
-        return result
+        return result.filter { $0.value.1.count > 0 }
     }
 
     private func findMutationPoints(in file: SourceCodeInfo) -> [MutationPoint] {
@@ -50,13 +50,13 @@ final class FindMutantsStep: MutanusSequanceStep {
         }
     }
 
-    func sourceCode(fromFileAt path: String) -> SourceCodeInfo? {
-        let url = URL(fileURLWithPath: path)
-        return (try? SyntaxParser.parse(url)).map { SourceCodeInfo(path: url.absoluteString, code: $0) }
-    }
-
     private func filePositionOrder(lhs: MutationPoint, rhs: MutationPoint) -> Bool {
         return lhs.position.line < rhs.position.line &&
             lhs.position.column < rhs.position.column
     }
+}
+
+func sourceCode(fromFileAt path: String) -> SourceCodeInfo? {
+    let url = URL(fileURLWithPath: path)
+    return (try? SyntaxParser.parse(url)).map { SourceCodeInfo(path: url.absoluteString, code: $0) }
 }

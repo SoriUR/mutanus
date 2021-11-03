@@ -16,7 +16,10 @@ enum RemoveSideEffectsOperator {
         private let sourceFileInfo: SourceFileInfo
 
         init(sourceFileInfo: SourceFileInfo) {
-            untestedFunctionNames = ["print", "fatalError", "exit", "abort"]
+            untestedFunctionNames = [
+                "print", "fatalError", "exit", "abort",
+                "viewDidLoad", "viewDidAppear"
+            ]
             self.sourceFileInfo = sourceFileInfo
         }
 
