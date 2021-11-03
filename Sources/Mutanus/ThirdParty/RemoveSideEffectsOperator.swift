@@ -15,8 +15,8 @@ enum RemoveSideEffectsOperator {
         private let untestedFunctionNames: [String]
         private let sourceFileInfo: SourceFileInfo
 
-        init(configuration: MuterConfiguration? = nil, sourceFileInfo: SourceFileInfo) {
-            untestedFunctionNames = ["print", "fatalError", "exit", "abort"] + (configuration?.excludeCallList ?? [])
+        init(sourceFileInfo: SourceFileInfo) {
+            untestedFunctionNames = ["print", "fatalError", "exit", "abort"]
             self.sourceFileInfo = sourceFileInfo
         }
 

@@ -6,7 +6,7 @@ class TokenAwareVisitor: SyntaxAnyVisitor, PositionDiscoveringVisitor {
     
     private let sourceFileInfo: SourceFileInfo
 
-    required init(configuration: MuterConfiguration?, sourceFileInfo: SourceFileInfo) {
+    required init(sourceFileInfo: SourceFileInfo) {
         self.sourceFileInfo = sourceFileInfo
     }
     
@@ -43,8 +43,8 @@ private extension SequenceExprSyntax {
 /// Relational Operator Replacement
 enum ROROperator {
     class Visitor: TokenAwareVisitor {
-        required init(configuration: MuterConfiguration? = nil, sourceFileInfo: SourceFileInfo) {
-            super.init(configuration: configuration, sourceFileInfo: sourceFileInfo)
+        required init(sourceFileInfo: SourceFileInfo) {
+            super.init(sourceFileInfo: sourceFileInfo)
             tokensToDiscover = [
                 .spacedBinaryOperator("=="),
                 .spacedBinaryOperator("!="),
@@ -60,8 +60,8 @@ enum ROROperator {
 
 enum ChangeLogicalConnectorOperator {
     class Visitor: TokenAwareVisitor {
-        required init(configuration: MuterConfiguration? = nil, sourceFileInfo: SourceFileInfo) {
-            super.init(configuration: configuration, sourceFileInfo: sourceFileInfo)
+        required init(sourceFileInfo: SourceFileInfo) {
+            super.init(sourceFileInfo: sourceFileInfo)
             tokensToDiscover = [
                 .spacedBinaryOperator("||"),
                 .spacedBinaryOperator("&&"),

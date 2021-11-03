@@ -3,7 +3,7 @@ import Foundation
 
 typealias SourceCodeTransformation = (SourceFileSyntax) -> (mutatedSource: SyntaxProtocol, mutationSnapshot: MutationOperatorSnapshot)
 typealias RewriterInitializer = (MutationPosition) -> PositionSpecificRewriter
-typealias VisitorInitializer = (MuterConfiguration, SourceFileInfo) -> PositionDiscoveringVisitor
+typealias VisitorInitializer = (SourceFileInfo) -> PositionDiscoveringVisitor
 
 public struct MutationPoint: Equatable, Codable {
     let mutationOperatorId: MutationOperator.Id
@@ -34,24 +34,36 @@ struct MutationOperator {
         case ror = "RelationalOperatorReplacement"
         case removeSideEffects = "RemoveSideEffects"
         case logicalOperator = "ChangeLogicalConnector"
-        
-        var rewriterVisitorPair: (rewriter: RewriterInitializer, visitor: VisitorInitializer) {
+
+        func visitor(_ info: SourceFileInfo) -> PositionDiscoveringVisitor {
             switch self {
             case .removeSideEffects:
-               return (rewriter: RemoveSideEffectsOperator.Rewriter.init,
-                       visitor: RemoveSideEffectsOperator.Visitor.init)
+               return RemoveSideEffectsOperator.Visitor(sourceFileInfo: info)
+
             case .ror:
-                return (rewriter: ROROperator.Rewriter.init,
-                        visitor: ROROperator.Visitor.init)
+                return ROROperator.Visitor(sourceFileInfo: info)
+
             case .logicalOperator:
-                return (rewriter: ChangeLogicalConnectorOperator.Rewriter.init,
-                        visitor: ChangeLogicalConnectorOperator.Visitor.init)
+                return ChangeLogicalConnectorOperator.Visitor(sourceFileInfo: info)
+            }
+        }
+
+        func rewriter(_ position: MutationPosition) -> PositionSpecificRewriter {
+            switch self {
+            case .removeSideEffects:
+               return RemoveSideEffectsOperator.Rewriter(positionToMutate: position)
+
+            case .ror:
+                return ROROperator.Rewriter(positionToMutate: position)
+
+            case .logicalOperator:
+                return ChangeLogicalConnectorOperator.Rewriter(positionToMutate: position)
             }
         }
         
         func mutationOperator(for position: MutationPosition) -> SourceCodeTransformation {
             return { source in
-                let visitor = self.rewriterVisitorPair.rewriter(position)
+                let visitor = self.rewriter(position)
                 let mutatedSource = visitor.visit(source)
                 let operatorSnapshot = visitor.operatorSnapshot
                 return (
@@ -74,7 +86,7 @@ protocol PositionSpecificRewriter {
 
 protocol PositionDiscoveringVisitor {
     var positionsOfToken: [MutationPosition] { get }
-    init(configuration: MuterConfiguration?, sourceFileInfo: SourceFileInfo)
+    init(sourceFileInfo: SourceFileInfo)
 
     func walk<SyntaxType: SyntaxProtocol>(_ node: SyntaxType)
 }

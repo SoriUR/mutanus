@@ -1,14 +1,12 @@
 //
-//  MutationTestingStep.swift
-//  Mutanus
-//
 //  Created by Iurii Sorokin on 03.11.2021.
 //
 
+import SwiftSyntax
 import Foundation
 
 final class MutationTestingStep: MutanusSequanceStep {
-    typealias Context = [String: [MutationPoint]]
+    typealias Context = [String: (SourceFileSyntax, [MutationPoint])]
     typealias Result = Void
 
     var next: AnyPerformsAction<Result>?
@@ -26,7 +24,7 @@ final class MutationTestingStep: MutanusSequanceStep {
 
     func performStep(_ context: Context) throws -> Result {
         let mutantsMaxCount = context.values.reduce(0) { result, current in
-            return result > current.count ? result : current.count
+            return result > current.1.count ? result : current.1.count
         }
 
         var mutationResults = [ExecutionResult]()
@@ -38,8 +36,6 @@ final class MutationTestingStep: MutanusSequanceStep {
 
         for i in 0..<mutantsMaxCount {
             Logger.logEvent(.mutationIterationStarted(index: i+1))
-
-
 
             let info = try executor.executeProccess(with: parameters)
             let executionResult = ExecutionResultParser.recognizeResult(in: info.logURL)

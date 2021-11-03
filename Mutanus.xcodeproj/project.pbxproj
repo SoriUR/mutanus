@@ -657,10 +657,10 @@
 				OBJ_9 /* ExecutionResultParser.swift */,
 				OBJ_10 /* Executor.swift */,
 				OBJ_11 /* Logger.swift */,
+				OBJ_32 /* main.swift */,
 				OBJ_12 /* Mutanus.swift */,
 				OBJ_13 /* Steps */,
 				OBJ_23 /* ThirdParty */,
-				OBJ_32 /* main.swift */,
 			);
 			name = Mutanus;
 			path = Sources/Mutanus;
