@@ -8,7 +8,7 @@
 import Foundation
 
 final class MutationTestingStep: MutanusSequanceStep {
-    typealias Context = [String: [String]]
+    typealias Context = [String: [MutationPoint]]
     typealias Result = Void
 
     var next: AnyPerformsAction<Result>?
@@ -38,6 +38,8 @@ final class MutationTestingStep: MutanusSequanceStep {
 
         for i in 0..<mutantsMaxCount {
             Logger.logEvent(.mutationIterationStarted(index: i+1))
+
+
 
             let info = try executor.executeProccess(with: parameters)
             let executionResult = ExecutionResultParser.recognizeResult(in: info.logURL)

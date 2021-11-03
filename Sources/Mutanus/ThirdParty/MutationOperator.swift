@@ -1,14 +1,14 @@
 import SwiftSyntax
 import Foundation
 
-typealias SourceCodeTransformation = (Syntax) -> (mutatedSource: Syntax, description: String)
-typealias RewriterInitializer = (AbsolutePosition) -> PositionSpecificRewriter
-typealias VisitorInitializer = (MuterConfiguration) -> PositionDiscoveringVisitor
+typealias SourceCodeTransformation = (SourceFileSyntax) -> (mutatedSource: SyntaxProtocol, mutationSnapshot: MutationOperatorSnapshot)
+typealias RewriterInitializer = (MutationPosition) -> PositionSpecificRewriter
+typealias VisitorInitializer = (MuterConfiguration, SourceFileInfo) -> PositionDiscoveringVisitor
 
 public struct MutationPoint: Equatable, Codable {
     let mutationOperatorId: MutationOperator.Id
     let filePath: String
-    let position: AbsolutePosition
+    let position: MutationPosition
     
     var fileName: String {
         return URL(fileURLWithPath: self.filePath).lastPathComponent
@@ -16,6 +16,16 @@ public struct MutationPoint: Equatable, Codable {
     
     var mutationOperator: SourceCodeTransformation {
         return mutationOperatorId.mutationOperator(for: position)
+    }
+}
+
+extension MutationPoint: Nullable {
+    static var null: MutationPoint {
+        MutationPoint(
+            mutationOperatorId: .removeSideEffects,
+            filePath: "",
+            position: .null
+        )
     }
 }
 
@@ -39,26 +49,32 @@ struct MutationOperator {
             }
         }
         
-        func mutationOperator(for position: AbsolutePosition) -> SourceCodeTransformation {
+        func mutationOperator(for position: MutationPosition) -> SourceCodeTransformation {
             return { source in
                 let visitor = self.rewriterVisitorPair.rewriter(position)
                 let mutatedSource = visitor.visit(source)
+                let operatorSnapshot = visitor.operatorSnapshot
                 return (
                     mutatedSource: mutatedSource,
-                    description: visitor.description
+                    mutationSnapshot: operatorSnapshot
                 )
             }
         }
     }
 }
 
-protocol PositionSpecificRewriter: CustomStringConvertible {
-    var positionToMutate: AbsolutePosition { get }
-    init(positionToMutate: AbsolutePosition)
-    func visit(_ token: Syntax) -> Syntax
+protocol PositionSpecificRewriter {
+    var positionToMutate: MutationPosition { get }
+    var operatorSnapshot: MutationOperatorSnapshot { get set }
+
+    init(positionToMutate: MutationPosition)
+    
+    func visit(_ node: SourceFileSyntax) -> Syntax
 }
 
 protocol PositionDiscoveringVisitor {
-    var positionsOfToken: [AbsolutePosition] { get }
-    func visit(_ token: SourceFileSyntax)
+    var positionsOfToken: [MutationPosition] { get }
+    init(configuration: MuterConfiguration?, sourceFileInfo: SourceFileInfo)
+
+    func walk<SyntaxType: SyntaxProtocol>(_ node: SyntaxType)
 }

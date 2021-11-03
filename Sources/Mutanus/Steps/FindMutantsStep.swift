@@ -9,12 +9,12 @@ import Foundation
 
 final class FindMutantsStep: MutanusSequanceStep {
     typealias Context = [String]
-    typealias Result = [String: [String]]
+    typealias Result = [String: [MutationPoint]]
 
     var next: AnyPerformsAction<Result>?
 
     func performStep(_ context: Context) throws -> Result {
-        var result = [String: [String]]()
+        var result = [String: [MutationPoint]]()
         context.forEach {
             result[$0] = [] // TODO
         }
