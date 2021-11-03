@@ -31,7 +31,6 @@
 		4A4CAF3027322A500003410B /* MutationPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF2F27322A500003410B /* MutationPosition.swift */; };
 		4A4CAF3227322A5C0003410B /* Nullable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF3127322A5C0003410B /* Nullable.swift */; };
 		4A4CAF3427322A760003410B /* SourceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF3327322A760003410B /* SourceInfo.swift */; };
-		4A4CAF3627322A930003410B /* MuterConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF3527322A930003410B /* MuterConfiguration.swift */; };
 		4A4CAF3827322AB40003410B /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF3727322AB40003410B /* StringExtensions.swift */; };
 		4A4CAF3A27322AD20003410B /* SequenceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF3927322AD20003410B /* SequenceExtensions.swift */; };
 		4A4CAF3C27322AEA0003410B /* RegularExpressionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF3B27322AEA0003410B /* RegularExpressionExtensions.swift */; };
@@ -241,7 +240,6 @@
 		4A4CAF2F27322A500003410B /* MutationPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationPosition.swift; sourceTree = "<group>"; };
 		4A4CAF3127322A5C0003410B /* Nullable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nullable.swift; sourceTree = "<group>"; };
 		4A4CAF3327322A760003410B /* SourceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceInfo.swift; sourceTree = "<group>"; };
-		4A4CAF3527322A930003410B /* MuterConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuterConfiguration.swift; sourceTree = "<group>"; };
 		4A4CAF3727322AB40003410B /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		4A4CAF3927322AD20003410B /* SequenceExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceExtensions.swift; sourceTree = "<group>"; };
 		4A4CAF3B27322AEA0003410B /* RegularExpressionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegularExpressionExtensions.swift; sourceTree = "<group>"; };
@@ -513,7 +511,6 @@
 				4A4CAF2F27322A500003410B /* MutationPosition.swift */,
 				4A4CAF2227322A3B0003410B /* ChangeLogicalConnectorOperator.swift */,
 				4A4CAF2327322A3B0003410B /* MutationOperator.swift */,
-				4A4CAF3527322A930003410B /* MuterConfiguration.swift */,
 				4A4CAF2427322A3B0003410B /* MutationOperatorSnapshot.swift */,
 				4A4CAF3727322AB40003410B /* StringExtensions.swift */,
 				4A4CAF3327322A760003410B /* SourceInfo.swift */,
@@ -995,7 +992,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				4A4CAF3627322A930003410B /* MuterConfiguration.swift in Sources */,
 				OBJ_203 /* ExecutionResultParser.swift in Sources */,
 				OBJ_204 /* Executor.swift in Sources */,
 				4A4CAF3227322A5C0003410B /* Nullable.swift in Sources */,

@@ -6,7 +6,7 @@ typealias RewriterInitializer = (MutationPosition) -> PositionSpecificRewriter
 typealias VisitorInitializer = (SourceFileInfo) -> PositionDiscoveringVisitor
 
 public struct MutationPoint: Equatable, Codable {
-    let mutationOperatorId: MutationOperator.Id
+    let mutationOperatorId: MutationOperator
     let filePath: String
     let position: MutationPosition
     
@@ -29,48 +29,46 @@ extension MutationPoint: Nullable {
     }
 }
 
-struct MutationOperator {
-    public enum Id: String, Codable, CaseIterable {
-        case ror = "RelationalOperatorReplacement"
-        case removeSideEffects = "RemoveSideEffects"
-        case logicalOperator = "ChangeLogicalConnector"
+enum MutationOperator: String, Codable, CaseIterable {
+    case ror = "RelationalOperatorReplacement"
+    case removeSideEffects = "RemoveSideEffects"
+    case logicalOperator = "ChangeLogicalConnector"
 
-        func visitor(_ info: SourceFileInfo) -> PositionDiscoveringVisitor {
-            switch self {
-            case .removeSideEffects:
-               return RemoveSideEffectsOperator.Visitor(sourceFileInfo: info)
+    func visitor(_ info: SourceFileInfo) -> PositionDiscoveringVisitor {
+        switch self {
+        case .removeSideEffects:
+            return RemoveSideEffectsOperator.Visitor(sourceFileInfo: info)
 
-            case .ror:
-                return ROROperator.Visitor(sourceFileInfo: info)
+        case .ror:
+            return ROROperator.Visitor(sourceFileInfo: info)
 
-            case .logicalOperator:
-                return ChangeLogicalConnectorOperator.Visitor(sourceFileInfo: info)
-            }
+        case .logicalOperator:
+            return ChangeLogicalConnectorOperator.Visitor(sourceFileInfo: info)
         }
+    }
 
-        func rewriter(_ position: MutationPosition) -> PositionSpecificRewriter {
-            switch self {
-            case .removeSideEffects:
-               return RemoveSideEffectsOperator.Rewriter(positionToMutate: position)
+    func rewriter(_ position: MutationPosition) -> PositionSpecificRewriter {
+        switch self {
+        case .removeSideEffects:
+            return RemoveSideEffectsOperator.Rewriter(positionToMutate: position)
 
-            case .ror:
-                return ROROperator.Rewriter(positionToMutate: position)
+        case .ror:
+            return ROROperator.Rewriter(positionToMutate: position)
 
-            case .logicalOperator:
-                return ChangeLogicalConnectorOperator.Rewriter(positionToMutate: position)
-            }
+        case .logicalOperator:
+            return ChangeLogicalConnectorOperator.Rewriter(positionToMutate: position)
         }
-        
-        func mutationOperator(for position: MutationPosition) -> SourceCodeTransformation {
-            return { source in
-                let visitor = self.rewriter(position)
-                let mutatedSource = visitor.visit(source)
-                let operatorSnapshot = visitor.operatorSnapshot
-                return (
-                    mutatedSource: mutatedSource,
-                    mutationSnapshot: operatorSnapshot
-                )
-            }
+    }
+
+    func mutationOperator(for position: MutationPosition) -> SourceCodeTransformation {
+        return { source in
+            let rewriter = self.rewriter(position)
+            let mutatedSource = rewriter.visit(source)
+            let operatorSnapshot = rewriter.operatorSnapshot
+            return (
+                mutatedSource: mutatedSource,
+                mutationSnapshot: operatorSnapshot
+            )
         }
     }
 }

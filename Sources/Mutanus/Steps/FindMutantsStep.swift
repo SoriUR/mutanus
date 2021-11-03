@@ -36,7 +36,7 @@ final class FindMutantsStep: MutanusSequanceStep {
     }
 
     private func findMutationPoints(in file: SourceCodeInfo) -> [MutationPoint] {
-        MutationOperator.Id.allCases.accumulate(into: []) { newMutationPoints, mutationOperatorId in
+        MutationOperator.allCases.accumulate(into: []) { newMutationPoints, mutationOperatorId in
 
             let visitor = mutationOperatorId.visitor(file.asSourceFileInfo)
 
