@@ -21,6 +21,14 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		4A61A5C7273212390069A2B4 /* ReferenceRunStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A61A5C52732121F0069A2B4 /* ReferenceRunStep.swift */; };
+		4A61A5C92732124E0069A2B4 /* ExtractSourceFilesStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A61A5C82732124E0069A2B4 /* ExtractSourceFilesStep.swift */; };
+		4A61A5CB273212690069A2B4 /* FindMutantsStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A61A5CA273212690069A2B4 /* FindMutantsStep.swift */; };
+		4A61A5CD273212740069A2B4 /* MutationTestingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A61A5CC273212740069A2B4 /* MutationTestingStep.swift */; };
+		4A61A5D0273212930069A2B4 /* PerformsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A61A5CF273212930069A2B4 /* PerformsAction.swift */; };
+		4A61A5D2273212AB0069A2B4 /* ChainLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A61A5D1273212AB0069A2B4 /* ChainLink.swift */; };
+		4A61A5D4273212BD0069A2B4 /* MutanusSequanceStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A61A5D3273212BD0069A2B4 /* MutanusSequanceStep.swift */; };
+		4A61A5D6273212DF0069A2B4 /* StepsSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A61A5D5273212DF0069A2B4 /* StepsSequence.swift */; };
 		4AA15F8B273183AA000BB6D0 /* ExecutionResultParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA15F8A273183AA000BB6D0 /* ExecutionResultParser.swift */; };
 		4AA15F8D2731871F000BB6D0 /* Executor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA15F8C2731871F000BB6D0 /* Executor.swift */; };
 		4AA15F8F27318DC9000BB6D0 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA15F8E27318DC9000BB6D0 /* Logger.swift */; };
@@ -127,6 +135,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4A61A5C52732121F0069A2B4 /* ReferenceRunStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceRunStep.swift; sourceTree = "<group>"; };
+		4A61A5C82732124E0069A2B4 /* ExtractSourceFilesStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractSourceFilesStep.swift; sourceTree = "<group>"; };
+		4A61A5CA273212690069A2B4 /* FindMutantsStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindMutantsStep.swift; sourceTree = "<group>"; };
+		4A61A5CC273212740069A2B4 /* MutationTestingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationTestingStep.swift; sourceTree = "<group>"; };
+		4A61A5CF273212930069A2B4 /* PerformsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformsAction.swift; sourceTree = "<group>"; };
+		4A61A5D1273212AB0069A2B4 /* ChainLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChainLink.swift; sourceTree = "<group>"; };
+		4A61A5D3273212BD0069A2B4 /* MutanusSequanceStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutanusSequanceStep.swift; sourceTree = "<group>"; };
+		4A61A5D5273212DF0069A2B4 /* StepsSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepsSequence.swift; sourceTree = "<group>"; };
 		4AA15F8A273183AA000BB6D0 /* ExecutionResultParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionResultParser.swift; sourceTree = "<group>"; };
 		4AA15F8C2731871F000BB6D0 /* Executor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Executor.swift; sourceTree = "<group>"; };
 		4AA15F8E27318DC9000BB6D0 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -218,6 +234,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4A61A5C3273211F60069A2B4 /* Steps */ = {
+			isa = PBXGroup;
+			children = (
+				4A61A5CE273212860069A2B4 /* Common */,
+				4A61A5D5273212DF0069A2B4 /* StepsSequence.swift */,
+				4A61A5C52732121F0069A2B4 /* ReferenceRunStep.swift */,
+				4A61A5C82732124E0069A2B4 /* ExtractSourceFilesStep.swift */,
+				4A61A5CA273212690069A2B4 /* FindMutantsStep.swift */,
+				4A61A5CC273212740069A2B4 /* MutationTestingStep.swift */,
+			);
+			path = Steps;
+			sourceTree = "<group>";
+		};
+		4A61A5CE273212860069A2B4 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				4A61A5CF273212930069A2B4 /* PerformsAction.swift */,
+				4A61A5D1273212AB0069A2B4 /* ChainLink.swift */,
+				4A61A5D3273212BD0069A2B4 /* MutanusSequanceStep.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 		OBJ_11 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -390,11 +429,12 @@
 		OBJ_8 /* Mutanus */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_10 /* main.swift */,
-				OBJ_9 /* Mutanus.swift */,
 				4AA15F8A273183AA000BB6D0 /* ExecutionResultParser.swift */,
 				4AA15F8C2731871F000BB6D0 /* Executor.swift */,
 				4AA15F8E27318DC9000BB6D0 /* Logger.swift */,
+				OBJ_10 /* main.swift */,
+				OBJ_9 /* Mutanus.swift */,
+				4A61A5C3273211F60069A2B4 /* Steps */,
 			);
 			name = Mutanus;
 			path = Sources/Mutanus;
@@ -546,11 +586,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
+				4A61A5D6273212DF0069A2B4 /* StepsSequence.swift in Sources */,
 				4AA15F8F27318DC9000BB6D0 /* Logger.swift in Sources */,
+				4A61A5CB273212690069A2B4 /* FindMutantsStep.swift in Sources */,
+				4A61A5C7273212390069A2B4 /* ReferenceRunStep.swift in Sources */,
+				4A61A5D0273212930069A2B4 /* PerformsAction.swift in Sources */,
 				4AA15F8D2731871F000BB6D0 /* Executor.swift in Sources */,
 				OBJ_127 /* Mutanus.swift in Sources */,
+				4A61A5D4273212BD0069A2B4 /* MutanusSequanceStep.swift in Sources */,
+				4A61A5D2273212AB0069A2B4 /* ChainLink.swift in Sources */,
 				OBJ_128 /* main.swift in Sources */,
+				4A61A5C92732124E0069A2B4 /* ExtractSourceFilesStep.swift in Sources */,
 				4AA15F8B273183AA000BB6D0 /* ExecutionResultParser.swift in Sources */,
+				4A61A5CD273212740069A2B4 /* MutationTestingStep.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

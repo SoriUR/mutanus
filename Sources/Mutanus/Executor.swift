@@ -13,8 +13,9 @@ struct Executor {
 
     func executeProccess(with parameters: MutationParameters) throws -> Info {
 
-        let logPath = parameters.directory + "/" + Constants.logFileName
-        FileManager.default.createFile(atPath: logPath, contents: nil)
+        let fileManager = FileManager.default
+        let logPath = fileManager.currentDirectoryPath + "/" + Constants.logFileName
+        fileManager.createFile(atPath: logPath, contents: nil)
         let logURL = URL(fileURLWithPath: logPath)
         let logHandle = try FileHandle(forWritingTo: logURL)
 
@@ -42,6 +43,6 @@ struct Executor {
 
 private extension Executor {
     enum Constants {
-        static let logFileName = "MutanusExecutionLogFile"
+        static let logFileName = "MutanusExecutionLogFile.txt"
     }
 }

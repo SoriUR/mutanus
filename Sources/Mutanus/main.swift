@@ -21,6 +21,8 @@ struct Entry: ParsableCommand {
     func run() throws {
         let resultDirectory = directory ?? FileManager.default.currentDirectoryPath
 
+        let onlyTesting = files.map { "-only-testing:\(scheme)-Unit-Tests/\($0)" }
+
         let parameters = MutationParameters(
             directory: resultDirectory,
             executable: executable,
@@ -31,7 +33,7 @@ struct Entry: ParsableCommand {
                 "-scheme", "\(scheme)",
                 "-destination",
                 "platform=iOS Simulator,name=iPhone 8"
-            ] + files.map { "-only-testing:\(scheme)-Unit-Tests/\($0)" },
+            ],
             files: files
         )
 
@@ -53,7 +55,7 @@ extension Entry {
     private func validateDirectory(_ path: String?) throws {
         guard let path = path else { return }
 
-        let (exists, isDirectory) = fileExists(atPath: path)
+        let (exists, isDirectory) = FileManager.default.fileExists(atPath: path)
         guard exists  else {
             throw ValidationError("Path doesn't exist")
         }
@@ -69,11 +71,16 @@ extension Entry {
         }
     }
 
-    private func fileExists(atPath path: String) -> (exists: Bool, isDirectory: Bool)  {
-        var isDirectory = ObjCBool(false)
 
-        return (FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory), isDirectory.boolValue)
-    }
 }
 
 Entry.main()
+
+
+extension FileManager {
+    func fileExists(atPath path: String) -> (exists: Bool, isDirectory: Bool)  {
+        var isDirectory = ObjCBool(false)
+
+        return (fileExists(atPath: path, isDirectory: &isDirectory), isDirectory.boolValue)
+    }
+}
