@@ -6,38 +6,43 @@ import SwiftSyntax
 import Foundation
 
 final class MutationTestingStep: MutanusSequanceStep {
-    typealias Context = [String: (SourceFileSyntax, [MutationPoint])]
+    typealias Context = MutantsInfo
     typealias Result = Void
-
-    var next: AnyPerformsAction<Result>?
 
     let parameters: MutationParameters
     let executor: Executor
+    let resultParser: ExecutionResultParser
 
     init(
         parameters: MutationParameters,
-        executor: Executor
+        executor: Executor,
+        resultParser: ExecutionResultParser,
+        delegate: MutanusSequanceStepDelegate?
     ) {
         self.parameters = parameters
         self.executor = executor
+        self.resultParser = resultParser
+        self.delegate = delegate
     }
 
-    func performStep(_ context: Context) throws -> Result {
-        let mutantsMaxCount = context.values.reduce(0) { result, current in
-            return result > current.1.count ? result : current.1.count
-        }
+    // MARK: - MutanusSequanceStep
+
+    var delegate: MutanusSequanceStepDelegate?
+    var next: AnyPerformsAction<Result>?
+
+    func executeStep(_ context: Context) throws -> Result {
 
         var mutationResults = [ExecutionResult]()
-        mutationResults.reserveCapacity(mutantsMaxCount)
+        mutationResults.reserveCapacity(context.maxFileCount)
 
-        Logger.logEvent(.mutationTestingStarted(count: mutantsMaxCount))
+        Logger.logEvent(.mutationTestingStarted(count: context.maxFileCount))
 
         let startTime = Date()
 
-        for i in 0..<mutantsMaxCount {
+        for i in 0..<context.maxFileCount {
             Logger.logEvent(.mutationIterationStarted(index: i+1))
 
-            for (_, value) in context {
+            for (_, value) in context.mutants {
                 let mutationPoints = value.1
 
                 guard i < mutationPoints.count else { continue }
@@ -47,7 +52,7 @@ final class MutationTestingStep: MutanusSequanceStep {
             }
 
             let info = try executor.executeProccess(with: parameters)
-            let executionResult = ExecutionResultParser.recognizeResult(in: info.logURL)
+            let executionResult = resultParser.recognizeResult(in: info.logURL)
 
             Logger.logEvent(.mutationIterationFinished(duration: info.duration, result: executionResult))
 
@@ -65,7 +70,7 @@ final class MutationTestingStep: MutanusSequanceStep {
             survivedCount += 1 - increment
         }
 
-        Logger.logEvent(.mutationTestingFinished(duration: duration, total: mutantsMaxCount, killed: killedCount, survived: survivedCount))
+        Logger.logEvent(.mutationTestingFinished(duration: duration, total: context.maxFileCount, killed: killedCount, survived: survivedCount))
     }
 
     private func backupFile(at path: String, using swapFilePaths: [String: String]) {

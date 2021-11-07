@@ -11,31 +11,114 @@ struct MutationParameters {
     let files: [String]
 }
 
-struct Mutanus {
+final class Mutanus {
 
     let parameters: MutationParameters
     let executor: Executor
+    let fileManager: MutanusFileManger
+
+    var stepStartDate: Date!
 
     init(
         parameters: MutationParameters,
-        executor: Executor
+        executor: Executor,
+        fileManager: MutanusFileManger
     ) {
         self.parameters = parameters
         self.executor = executor
+        self.fileManager = fileManager
     }
 
     func start() throws {
-
-        FileManager.default.changeCurrentDirectoryPath(parameters.directory)
+        fileManager.changeCurrentDirectoryPath(parameters.directory)
 
         let sequence = StepsSequence()
 
         sequence
-            .next(ReferenceRunStep(parameters: parameters, executor: executor))
-            .next(ExtractSourceFilesStep(parameters: parameters))
-            .next(FindMutantsStep())
-            .next(MutationTestingStep(parameters: parameters, executor: executor))
+            .next(ReferenceRunStep(
+                parameters: parameters,
+                executor: executor,
+                resultParser: ExecutionResultParser(),
+                delegate: self
+            ))
+            .next(ExtractSourceFilesStep(
+                fileManager: fileManager,
+                parameters: parameters,
+                delegate: self
+            ))
+            .next(FindMutantsStep(delegate: self))
+            .next(MutationTestingStep(
+                parameters: parameters,
+                executor: executor,
+                resultParser: ExecutionResultParser(),
+                delegate: self
+            ))
 
         try sequence.start()
+    }
+}
+
+// MARK: - MutanusSequanceStepDelegate
+extension Mutanus: MutanusSequanceStepDelegate {
+
+    func stepStarted<T: ChainLink>(_ step: T) {
+        stepStartDate = Date()
+
+        switch step {
+        case is ReferenceRunStep:
+            Logger.logEvent(.referenceRunStart)
+
+        case is ExtractSourceFilesStep:
+            Logger.logEvent(.sourceFilesStart)
+
+        case is FindMutantsStep:
+            Logger.logEvent(.findMutantsStart)
+
+        default:
+            break
+        }
+    }
+
+    func stepFinished<T: ChainLink>(_ step: T, result: T.Result) throws {
+
+        switch step {
+        case is ReferenceRunStep:
+            try handleReferenceStepResult(result as! ReferenceRunStep.Result)
+
+        case is ExtractSourceFilesStep:
+            try handleSourcesStepResult(result as! ExtractSourceFilesStep.Result)
+
+        case is FindMutantsStep:
+            try handleFindMutantsStepResult(result as! FindMutantsStep.Result)
+
+        default:
+            break
+        }
+
+        let stepDuration = stepStartDate.distance(to: Date())
+        Logger.logStepDuration(stepDuration)
+    }
+}
+
+// MARK: - Private
+private extension Mutanus {
+    func handleReferenceStepResult(_ result: ReferenceRunStep.Result) throws {
+        Logger.logEvent(.referenceRunFinished(result: result))
+
+        guard result == .testSucceeded else {
+            throw MutanusError.moduleTestFailed
+        }
+    }
+
+    func handleSourcesStepResult(_ result: ExtractSourceFilesStep.Result) throws {
+        Logger.logEvent(.sourceFilesFinished(sources: result))
+
+        guard !result.isEmpty else { throw MutanusError.emptySources }
+    }
+
+    func handleFindMutantsStepResult(_ result: FindMutantsStep.Result) throws {
+        Logger.logEvent(.findMutantsFinished(result: result))
+
+        guard result.totalCount != 0 else { throw MutanusError.zeroMutants }
     }
 }

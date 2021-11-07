@@ -9,24 +9,34 @@ import Foundation
 
 final class ExtractSourceFilesStep: MutanusSequanceStep {
 
-    typealias Context = Void
+    typealias Context = ExecutionResult
     typealias Result = [String]
 
-    var next: AnyPerformsAction<Result>?
-
     let parameters: MutationParameters
+    let fileManager: MutanusFileManger
 
-    init(parameters: MutationParameters) {
+    init(
+        fileManager: MutanusFileManger,
+        parameters: MutationParameters,
+        delegate: MutanusSequanceStepDelegate?
+    ) {
+        self.fileManager = fileManager
         self.parameters = parameters
+        self.delegate = delegate
     }
 
-    func performStep(_ context: Context) throws -> Result {
+    // MARK: - MutanusSequanceStep
+
+    var next: AnyPerformsAction<Result>?
+    var delegate: MutanusSequanceStepDelegate?
+
+    func executeStep(_ context: Context) throws -> Result {
         var sourceFiles = [String]()
 
         let fileManager = FileManager.default
 
         parameters.files.forEach {
-            let path = parameters.directory + $0
+            let path = fileManager.currentDirectoryPath + $0
             let (exists, isDirectory) = fileManager.fileExists(atPath: path)
 
             guard exists else { return }

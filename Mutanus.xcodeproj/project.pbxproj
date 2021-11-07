@@ -21,6 +21,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		4A1DA82F27383797000D5725 /* MutanusFileManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1DA82D27383784000D5725 /* MutanusFileManger.swift */; };
+		4A1DA83227384909000D5725 /* MutanusError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1DA83127384909000D5725 /* MutanusError.swift */; };
 		4A4CAF2827322A3B0003410B /* RemoveSideEffectsOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF2127322A3B0003410B /* RemoveSideEffectsOperator.swift */; };
 		4A4CAF2927322A3B0003410B /* ChangeLogicalConnectorOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF2227322A3B0003410B /* ChangeLogicalConnectorOperator.swift */; };
 		4A4CAF2A27322A3B0003410B /* MutationOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF2327322A3B0003410B /* MutationOperator.swift */; };
@@ -230,6 +232,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4A1DA82D27383784000D5725 /* MutanusFileManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutanusFileManger.swift; sourceTree = "<group>"; };
+		4A1DA83127384909000D5725 /* MutanusError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutanusError.swift; sourceTree = "<group>"; };
 		4A4CAF2127322A3B0003410B /* RemoveSideEffectsOperator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoveSideEffectsOperator.swift; sourceTree = "<group>"; };
 		4A4CAF2227322A3B0003410B /* ChangeLogicalConnectorOperator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeLogicalConnectorOperator.swift; sourceTree = "<group>"; };
 		4A4CAF2327322A3B0003410B /* MutationOperator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutationOperator.swift; sourceTree = "<group>"; };
@@ -407,6 +411,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4A1DA82C27383775000D5725 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				4A1DA82D27383784000D5725 /* MutanusFileManger.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		4A1DA83027383ABD000D5725 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_9 /* ExecutionResultParser.swift */,
+				OBJ_10 /* Executor.swift */,
+				OBJ_11 /* Logger.swift */,
+				4A1DA83127384909000D5725 /* MutanusError.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
 		4A4CAF41273249B70003410B /* Operators */ = {
 			isa = PBXGroup;
 			children = (
@@ -615,7 +638,7 @@
 			path = ".build/checkouts/swift-syntax/Sources/SwiftSyntax";
 			sourceTree = SOURCE_ROOT;
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -626,7 +649,6 @@
 				OBJ_144 /* Build */,
 				OBJ_145 /* README.md */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_59 /* gyb_generated */ = {
@@ -675,13 +697,12 @@
 		OBJ_8 /* Mutanus */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_9 /* ExecutionResultParser.swift */,
-				OBJ_10 /* Executor.swift */,
-				OBJ_11 /* Logger.swift */,
 				OBJ_32 /* main.swift */,
 				OBJ_12 /* Mutanus.swift */,
+				4A1DA82C27383775000D5725 /* Protocols */,
 				OBJ_13 /* Steps */,
 				OBJ_23 /* ThirdParty */,
+				4A1DA83027383ABD000D5725 /* Entities */,
 			);
 			name = Mutanus;
 			path = Sources/Mutanus;
@@ -940,7 +961,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_137 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1025,6 +1046,7 @@
 				OBJ_206 /* Mutanus.swift in Sources */,
 				OBJ_207 /* ChainLink.swift in Sources */,
 				4A4CAF3427322A760003410B /* SourceInfo.swift in Sources */,
+				4A1DA83227384909000D5725 /* MutanusError.swift in Sources */,
 				4A4CAF2827322A3B0003410B /* RemoveSideEffectsOperator.swift in Sources */,
 				OBJ_208 /* MutanusSequanceStep.swift in Sources */,
 				4A4CAF3C27322AEA0003410B /* RegularExpressionExtensions.swift in Sources */,
@@ -1035,6 +1057,7 @@
 				4A4CAF3027322A500003410B /* MutationPosition.swift in Sources */,
 				4A4CAF2927322A3B0003410B /* ChangeLogicalConnectorOperator.swift in Sources */,
 				4A4CAF2D27322A3B0003410B /* OperatorAwareRewriter.swift in Sources */,
+				4A1DA82F27383797000D5725 /* MutanusFileManger.swift in Sources */,
 				4A4CAF2C27322A3B0003410B /* TokenAwareVisitor.swift in Sources */,
 				4A4CAF2E27322A3B0003410B /* ROROperator.swift in Sources */,
 				OBJ_213 /* ReferenceRunStep.swift in Sources */,

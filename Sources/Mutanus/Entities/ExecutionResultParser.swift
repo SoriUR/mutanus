@@ -5,7 +5,7 @@
 import Foundation
 
 struct ExecutionResultParser {
-    static func recognizeResult(in url: URL) -> ExecutionResult {
+    func recognizeResult(in url: URL) -> ExecutionResult {
         let fileContent = try! String(contentsOf: url)
         
         for item in ExecutionResult.allCases {
@@ -17,7 +17,7 @@ struct ExecutionResultParser {
         return .testSucceeded
     }
     
-    private static func getAttribute(for result: ExecutionResult) -> String {
+    private func getAttribute(for result: ExecutionResult) -> String {
         switch result {
         case .buildFailed: return "Testing cancelled because the build failed"
         case .testFailed: return "** TEST FAILED **"

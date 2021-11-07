@@ -3,6 +3,8 @@ import ArgumentParser
 
 struct Entry: ParsableCommand {
 
+    private var fileManager: MutanusFileManger { FileManager.default }
+
     @Option(name: .shortAndLong, help: "Path to project root")
     var directory: String?
 
@@ -39,7 +41,11 @@ struct Entry: ParsableCommand {
 
         Logger.logEvent(.receivedParameters(parameters))
 
-        try Mutanus(parameters: parameters, executor: Executor()).start()
+        try Mutanus(
+            parameters: parameters,
+            executor: Executor(fileManager: fileManager),
+            fileManager: fileManager
+        ).start()
     }
 }
 
@@ -70,17 +76,6 @@ extension Entry {
             throw ValidationError("Executable doesn't exist")
         }
     }
-
-
 }
 
 Entry.main()
-
-
-extension FileManager {
-    func fileExists(atPath path: String) -> (exists: Bool, isDirectory: Bool)  {
-        var isDirectory = ObjCBool(false)
-
-        return (fileExists(atPath: path, isDirectory: &isDirectory), isDirectory.boolValue)
-    }
-}

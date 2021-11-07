@@ -6,10 +6,19 @@ import Foundation
 
 enum LoggerEvent {
     case receivedParameters(MutationParameters)
+
     case referenceRunStart
-    case referenceRunFinished(duration: TimeInterval, result: ExecutionResult)
+    case referenceRunFinished(result: ExecutionResult)
+
+    case sourceFilesStart
+    case sourceFilesFinished(sources: [String])
+
+    case findMutantsStart
+    case findMutantsFinished(result: MutantsInfo)
+
     case mutationTestingStarted(count: Int)
     case mutationTestingFinished(duration: TimeInterval, total: Int, killed: Int, survived: Int)
+
     case mutationIterationStarted(index: Int)
     case mutationIterationFinished(duration: TimeInterval, result: ExecutionResult)
 }
@@ -18,14 +27,26 @@ enum Logger  {
 
     static func logEvent(_ event: LoggerEvent) {
         switch event {
+        case let .receivedParameters(parameters):
+            logReceivedParameters(parameters)
+
         case .referenceRunStart:
             printOutput(title: "Reference Run Started")
 
-        case let .referenceRunFinished(duration, result):
-            logReferenceRunFinished(duration, result)
+        case let .referenceRunFinished(result):
+            logReferenceRunFinished(result)
 
-        case let .receivedParameters(parameters):
-            logReceivedParameters(parameters)
+        case .sourceFilesStart:
+            printOutput(title: "Extract Source Files")
+
+        case let .sourceFilesFinished(result):
+            logSourceFilesFinished(result)
+
+        case .findMutantsStart:
+            printOutput(title: "Search for Mutants")
+
+        case let .findMutantsFinished(result):
+            logFindMutantsFinished(result)
 
         case let .mutationTestingStarted(count):
             printOutput(title: "Mutation Testing Started. Total Iterations Count: \(count)")
@@ -41,7 +62,15 @@ enum Logger  {
         }
     }
 
-    private static func logReceivedParameters(_ parameters: MutationParameters) {
+    static func logStepDuration(_ duration: TimeInterval) {
+        print(String(format: "    Step Duration: %.2f", duration))
+    }
+}
+
+// MARK: - Private
+private extension Logger {
+
+    static func logReceivedParameters(_ parameters: MutationParameters) {
         let content = """
             directory: \(parameters.directory)
             executable: \(parameters.executable)
@@ -51,7 +80,38 @@ enum Logger  {
         printOutput(title: "Mutanus Parameters", content: content)
     }
 
-    private static func logReferenceRunFinished(_ duration: TimeInterval, _ result: ExecutionResult) {
+    static func logReferenceRunFinished(_ result: ExecutionResult) {
+        let content = """
+            Result: \(result.pretty)
+        """
+        printOutput(title: nil, content: content)
+    }
+
+    static func logSourceFilesFinished(_ result: [String]) {
+        let str = result.reduce(into: "") { result, current in
+            result += "    \(URL(fileURLWithPath: current).lastPathComponent)\n"
+        }
+        let content = """
+        \(str)
+        """
+        printOutput(title: nil, content: content)
+    }
+
+    static func logFindMutantsFinished(_ result: MutantsInfo) {
+        var str = ""
+        for (key, value) in result.mutants {
+            str += "    \(URL(fileURLWithPath: key).lastPathComponent): \(value.1.count) mutants\n"
+        }
+        let content = """
+            Total Mutants: \(result.totalCount)
+            Max Mutants in a file: \(result.maxFileCount)
+
+        \(str)
+        """
+        printOutput(title: nil, content: content)
+    }
+
+    static func logMutationIterationFinished(_ duration: TimeInterval, _ result: ExecutionResult) {
         let content = """
             Duration: \(duration.rounded()) sec
             Result: \(result.pretty)
@@ -59,15 +119,7 @@ enum Logger  {
         printOutput(title: nil, content: content)
     }
 
-    private static func logMutationIterationFinished(_ duration: TimeInterval, _ result: ExecutionResult) {
-        let content = """
-            Duration: \(duration.rounded()) sec
-            Result: \(result.pretty)
-        """
-        printOutput(title: nil, content: content)
-    }
-
-    private static func logMutationTestingFinished(
+    static func logMutationTestingFinished(
         _ duration: TimeInterval,
         _ total: Int,
         _ killed: Int,
@@ -78,14 +130,14 @@ enum Logger  {
             Mutants Count: \(total)
             Mutants Killed: \(killed)
             Mutants Survived: \(survived)
-            Mutation Score: \(Float(killed)/Float(survived))
+            Mutation Score: \(Float(killed)/Float(total))
 
         """
 
         printOutput(title: "Mutation Testing Result", content: content)
     }
 
-    private static func printOutput(title: String?, content: String? = nil) {
+    static func printOutput(title: String?, content: String? = nil) {
 
         if let title = title {
             print("""

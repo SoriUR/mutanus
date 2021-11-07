@@ -9,31 +9,34 @@ import Foundation
 
 final class ReferenceRunStep: MutanusSequanceStep {
     typealias Context = Void
-    typealias Result = Void
+    typealias Result = ExecutionResult
 
     let parameters: MutationParameters
     let executor: Executor
+    let resultParser: ExecutionResultParser
 
     init(
         parameters: MutationParameters,
-        executor: Executor
+        executor: Executor,
+        resultParser: ExecutionResultParser,
+        delegate: MutanusSequanceStepDelegate?
     ) {
         self.parameters = parameters
         self.executor = executor
+        self.resultParser = resultParser
+        self.delegate = delegate
     }
 
+    // MARK: - MutanusSequanceStep
+
     var next: AnyPerformsAction<Result>?
+    var delegate: MutanusSequanceStepDelegate?
 
-    func performStep(_ context: Context) throws -> Result {
-        Logger.logEvent(.referenceRunStart)
-
-        let info = try executor.executeProccess(with: parameters)
-        let executionResult = ExecutionResultParser.recognizeResult(in: info.logURL)
-
-        Logger.logEvent(.referenceRunFinished(duration: info.duration, result: executionResult))
-
-        guard executionResult == .testSucceeded else {
-            fatalError("Module tests failed")
-        }
+    func executeStep(_ context: Context) throws -> Result {
+//        let info = try executor.executeProccess(with: parameters)
+//        let executionResult = resultParser.recognizeResult(in: info.logURL)
+//
+//        return executionResult
+        return ExecutionResult.testSucceeded
     }
 }

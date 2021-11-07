@@ -11,11 +11,16 @@ struct Executor {
         let logURL: URL
     }
 
+    let fileManager: MutanusFileManger
+
+    init(fileManager: MutanusFileManger) {
+        self.fileManager = fileManager
+    }
+
     func executeProccess(with parameters: MutationParameters) throws -> Info {
 
-        let fileManager = FileManager.default
-        let logPath = fileManager.currentDirectoryPath + "/" + Constants.logFileName
-        fileManager.createFile(atPath: logPath, contents: nil)
+        let logPath = fileManager.logFilePath(appending: Constants.logFileName)
+        fileManager.createEmptyFile(atPath: logPath)
         let logURL = URL(fileURLWithPath: logPath)
         let logHandle = try FileHandle(forWritingTo: logURL)
 
