@@ -31,13 +31,15 @@ final class Mutanus {
 
     func start() throws {
         fileManager.changeCurrentDirectoryPath(parameters.directory)
+        fileManager.createLogsDirectory()
+        fileManager.createBackupsDirectory()
 
         let sequence = StepsSequence()
 
         sequence
             .next(ReferenceRunStep(
-                parameters: parameters,
                 executor: executor,
+                fileManager: fileManager,
                 resultParser: ExecutionResultParser(),
                 delegate: self
             ))
@@ -47,10 +49,14 @@ final class Mutanus {
                 delegate: self
             ))
             .next(FindMutantsStep(delegate: self))
+            .next(BackupFilesStep(
+                fileManager: fileManager,
+                delegate: self
+            ))
             .next(MutationTestingStep(
-                parameters: parameters,
                 executor: executor,
                 resultParser: ExecutionResultParser(),
+                fileManager: fileManager,
                 delegate: self
             ))
 

@@ -63,7 +63,7 @@ enum Logger  {
     }
 
     static func logStepDuration(_ duration: TimeInterval) {
-        print(String(format: "    Step Duration: %.2f", duration))
+        print(String(format: "    Step Duration: %.2f sec", duration))
     }
 }
 

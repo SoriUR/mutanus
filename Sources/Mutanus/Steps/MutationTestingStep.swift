@@ -6,26 +6,27 @@ import SwiftSyntax
 import Foundation
 
 final class MutationTestingStep: MutanusSequanceStep {
-    typealias Context = MutantsInfo
-    typealias Result = Void
 
-    let parameters: MutationParameters
     let executor: Executor
     let resultParser: ExecutionResultParser
+    let fileManager: MutanusFileManger
 
     init(
-        parameters: MutationParameters,
         executor: Executor,
         resultParser: ExecutionResultParser,
+        fileManager: MutanusFileManger,
         delegate: MutanusSequanceStepDelegate?
     ) {
-        self.parameters = parameters
+        self.fileManager = fileManager
         self.executor = executor
         self.resultParser = resultParser
         self.delegate = delegate
     }
 
     // MARK: - MutanusSequanceStep
+
+    typealias Context = MutantsInfo
+    typealias Result = Void
 
     var delegate: MutanusSequanceStepDelegate?
     var next: AnyPerformsAction<Result>?
@@ -35,31 +36,43 @@ final class MutationTestingStep: MutanusSequanceStep {
         var mutationResults = [ExecutionResult]()
         mutationResults.reserveCapacity(context.maxFileCount)
 
+        let testingStartTime = Date()
+
         Logger.logEvent(.mutationTestingStarted(count: context.maxFileCount))
 
-        let startTime = Date()
-
         for i in 0..<context.maxFileCount {
+
+            let iterationStartTime = Date()
+
             Logger.logEvent(.mutationIterationStarted(index: i+1))
 
-            for (_, value) in context.mutants {
-                let mutationPoints = value.1
+            let logURL = fileManager.createLogFile(name: "Iteration\(i+1).txt")
+
+            for mutantInfo in context.mutants.values {
+                let mutationPoints = mutantInfo.1
 
                 guard i < mutationPoints.count else { continue }
 
-                let sourceCode = value.0
+                let sourceCode = mutantInfo.0
                 insertMutant(at: mutationPoints[i], within: sourceCode)
             }
 
-            let info = try executor.executeProccess(with: parameters)
-            let executionResult = resultParser.recognizeResult(in: info.logURL)
+            try executor.executeProccess(logURL: logURL)
 
-            Logger.logEvent(.mutationIterationFinished(duration: info.duration, result: executionResult))
+            let iterationDuration = iterationStartTime.distance(to: Date())
+
+            let executionResult = resultParser.recognizeResult(in: logURL)
+
+            Logger.logEvent(.mutationIterationFinished(duration: iterationDuration, result: executionResult))
+
+            for (key, value) in context.mutants where i == (value.1.count - 1) {
+                fileManager.restoreFileFromBackup(path: key)
+            }
 
             mutationResults.append(executionResult)
         }
 
-        let duration = startTime.distance(to: Date())
+        let duration = testingStartTime.distance(to: Date())
 
         var survivedCount = 0
         var killedCount = 0
@@ -72,26 +85,14 @@ final class MutationTestingStep: MutanusSequanceStep {
 
         Logger.logEvent(.mutationTestingFinished(duration: duration, total: context.maxFileCount, killed: killedCount, survived: survivedCount))
     }
+}
 
-    private func backupFile(at path: String, using swapFilePaths: [String: String]) {
-        let swapFilePath = swapFilePaths[path]!
-        copySourceCode(fromFileAt: path, to: swapFilePath)
-    }
+private extension MutationTestingStep {
 
-    private func restoreFile(at path: String, using swapFilePaths: [String: String]) {
-        let swapFilePath = swapFilePaths[path]!
-        copySourceCode(fromFileAt: swapFilePath, to: path)
-    }
-
-    private func insertMutant(at mutationPoint: MutationPoint, within sourceCode: SourceFileSyntax) {
+    func insertMutant(at mutationPoint: MutationPoint, within sourceCode: SourceFileSyntax) {
         let mutatedSource = mutationPoint.mutationOperator(sourceCode).mutatedSource
         var path = mutationPoint.filePath
         path.removeFirst(7)
         try! mutatedSource.description.write(toFile: path, atomically: true, encoding: .utf8)
-    }
-
-    private func copySourceCode(fromFileAt sourcePath: String, to destinationPath: String) {
-        let source = sourceCode(fromFileAt: sourcePath)
-        try? source?.code.description.write(toFile: destinationPath, atomically: true, encoding: .utf8)
     }
 }
