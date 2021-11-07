@@ -5,6 +5,12 @@
 import SwiftSyntax
 import Foundation
 
+struct MutationTestingResult {
+    let total: Int
+    let survived: Int
+    let killed: Int
+}
+
 final class MutationTestingStep: MutanusSequanceStep {
 
     let executor: Executor
@@ -26,7 +32,7 @@ final class MutationTestingStep: MutanusSequanceStep {
     // MARK: - MutanusSequanceStep
 
     typealias Context = MutantsInfo
-    typealias Result = Void
+    typealias Result = MutationTestingResult
 
     var delegate: MutanusSequanceStepDelegate?
     var next: AnyPerformsAction<Result>?
@@ -36,11 +42,7 @@ final class MutationTestingStep: MutanusSequanceStep {
         var mutationResults = [ExecutionResult]()
         mutationResults.reserveCapacity(context.maxFileCount)
 
-        let testingStartTime = Date()
-
-        Logger.logEvent(.mutationTestingStarted(count: context.maxFileCount))
-
-        for i in 0..<context.maxFileCount {
+        for i in 1..<3 {
 
             let iterationStartTime = Date()
 
@@ -71,18 +73,20 @@ final class MutationTestingStep: MutanusSequanceStep {
             mutationResults.append(executionResult)
         }
 
-        let duration = testingStartTime.distance(to: Date())
-
         var survivedCount = 0
         var killedCount = 0
 
         mutationResults.forEach { result in
-            let increment = result == .testFailed ? 1 : 0
+            let increment = result == .testSucceeded ? 0 : 1
             killedCount += increment
             survivedCount += 1 - increment
         }
 
-        Logger.logEvent(.mutationTestingFinished(duration: duration, total: context.maxFileCount, killed: killedCount, survived: survivedCount))
+        return MutationTestingResult(
+            total: context.totalCount,
+            survived: survivedCount,
+            killed: killedCount
+        )
     }
 }
 
