@@ -42,7 +42,7 @@ final class MutationTestingStep: MutanusSequanceStep {
         var mutationResults = [ExecutionResult]()
         mutationResults.reserveCapacity(context.maxFileCount)
 
-        for i in 1..<3 {
+        for i in 0..<context.maxFileCount {
 
             let iterationStartTime = Date()
 
