@@ -31,8 +31,7 @@ final class Mutanus {
 
     func start() throws {
         fileManager.changeCurrentDirectoryPath(parameters.directory)
-        fileManager.createLogsDirectory()
-        fileManager.createBackupsDirectory()
+        fileManager.createMutanusDirectories()
 
         let sequence = StepsSequence()
 

@@ -60,7 +60,6 @@ final class MutationTestingStep: MutanusSequanceStep {
             try executor.executeProccess(logURL: logURL)
 
             let iterationDuration = iterationStartTime.distance(to: Date())
-
             let executionResult = resultParser.recognizeResult(in: logURL)
 
             Logger.logEvent(.mutationIterationFinished(duration: iterationDuration, result: executionResult))

@@ -12,8 +12,7 @@ protocol MutanusFileManger {
     @discardableResult
     func changeCurrentDirectoryPath(_ path: String) -> Bool
 
-    func createLogsDirectory()
-    func createBackupsDirectory()
+    func createMutanusDirectories()
     func createLogFile(name: String) -> URL
     func fileExists(atPath path: String) -> (exists: Bool, isDirectory: Bool)
     func createBackupFile(path: String)
@@ -22,25 +21,13 @@ protocol MutanusFileManger {
 
 extension FileManager: MutanusFileManger {
 
-    func createLogsDirectory() {
-        let path = logsDirectoryPath()
-        let (exists, isDirectory) = fileExists(atPath: path)
-        if !exists && !isDirectory {
-            try! createDirectory(atPath: path, withIntermediateDirectories: false)
-        }
-    }
-
-    func createBackupsDirectory() {
-        let path = backupsDirectoryPath()
-        let (exists, isDirectory) = fileExists(atPath: path)
-        if exists && isDirectory {
-            try! removeItem(atPath: path)
-        }
-        try! createDirectory(atPath: path, withIntermediateDirectories: false)
+    func createMutanusDirectories() {
+        createDirectory(atPath: logsDirectoryPath)
+        createDirectory(atPath: backupsDirectoryPath)
     }
 
     func createLogFile(name: String) -> URL {
-        let logPath = logsDirectoryPath() + name
+        let logPath = logsDirectoryPath + name
         createFile(atPath: logPath, contents: nil)
         return URL(fileURLWithPath: logPath)
     }
@@ -63,15 +50,25 @@ extension FileManager: MutanusFileManger {
         try! removeItem(atPath: backupFilePath)
     }
 
-    private func logsDirectoryPath() -> String {
+    // MARK: - Private
+
+    private var logsDirectoryPath: String {
         currentDirectoryPath + "/MutanusLogs/"
     }
 
-    private func backupsDirectoryPath() -> String {
+    private var backupsDirectoryPath: String {
         currentDirectoryPath + "/MutanusBackups/"
     }
 
+    private func createDirectory(atPath path: String) {
+        let (exists, isDirectory) = fileExists(atPath: path)
+        if exists && isDirectory {
+            try! removeItem(atPath: path)
+        }
+        try! createDirectory(atPath: path, withIntermediateDirectories: false)
+    }
+
     private func backupFilePath(path: String) -> String {
-        backupsDirectoryPath() + URL(fileURLWithPath: path).lastPathComponent
+        backupsDirectoryPath + URL(fileURLWithPath: path).lastPathComponent
     }
 }
