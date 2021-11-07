@@ -31,13 +31,14 @@ final class Mutanus {
 
     func start() throws {
         fileManager.changeCurrentDirectoryPath(parameters.directory)
+        fileManager.createMutanusDirectories()
 
         let sequence = StepsSequence()
 
         sequence
             .next(ReferenceRunStep(
-                parameters: parameters,
                 executor: executor,
+                fileManager: fileManager,
                 resultParser: ExecutionResultParser(),
                 delegate: self
             ))
@@ -47,10 +48,14 @@ final class Mutanus {
                 delegate: self
             ))
             .next(FindMutantsStep(delegate: self))
+            .next(BackupFilesStep(
+                fileManager: fileManager,
+                delegate: self
+            ))
             .next(MutationTestingStep(
-                parameters: parameters,
                 executor: executor,
                 resultParser: ExecutionResultParser(),
+                fileManager: fileManager,
                 delegate: self
             ))
 
@@ -66,13 +71,19 @@ extension Mutanus: MutanusSequanceStepDelegate {
 
         switch step {
         case is ReferenceRunStep:
-            Logger.logEvent(.referenceRunStart)
+            Logger.logEvent(.referenceRunStarted)
 
         case is ExtractSourceFilesStep:
-            Logger.logEvent(.sourceFilesStart)
+            Logger.logEvent(.sourceFilesStarted)
 
         case is FindMutantsStep:
-            Logger.logEvent(.findMutantsStart)
+            Logger.logEvent(.findMutantsStarted)
+
+        case is BackupFilesStep:
+            Logger.logEvent(.filesBackupStared)
+
+        case is MutationTestingStep:
+            Logger.logEvent(.mutationTestingStarted)
 
         default:
             break
@@ -90,6 +101,9 @@ extension Mutanus: MutanusSequanceStepDelegate {
 
         case is FindMutantsStep:
             try handleFindMutantsStepResult(result as! FindMutantsStep.Result)
+
+        case is MutationTestingStep:
+            handleMutationTestingStepResult(result as! MutationTestingStep.Result)
 
         default:
             break
@@ -120,5 +134,9 @@ private extension Mutanus {
         Logger.logEvent(.findMutantsFinished(result: result))
 
         guard result.totalCount != 0 else { throw MutanusError.zeroMutants }
+    }
+
+    func handleMutationTestingStepResult(_ result: MutationTestingStep.Result) {
+        Logger.logEvent(.mutationTestingFinished(total: result.total, killed: result.killed, survived: result.survived))
     }
 }

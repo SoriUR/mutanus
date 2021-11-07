@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		4A1DA82F27383797000D5725 /* MutanusFileManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1DA82D27383784000D5725 /* MutanusFileManger.swift */; };
 		4A1DA83227384909000D5725 /* MutanusError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1DA83127384909000D5725 /* MutanusError.swift */; };
+		4A32ECD027387B1E00FE5212 /* BackupFilesStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A32ECCF27387B1E00FE5212 /* BackupFilesStep.swift */; };
 		4A4CAF2827322A3B0003410B /* RemoveSideEffectsOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF2127322A3B0003410B /* RemoveSideEffectsOperator.swift */; };
 		4A4CAF2927322A3B0003410B /* ChangeLogicalConnectorOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF2227322A3B0003410B /* ChangeLogicalConnectorOperator.swift */; };
 		4A4CAF2A27322A3B0003410B /* MutationOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4CAF2327322A3B0003410B /* MutationOperator.swift */; };
@@ -234,6 +235,7 @@
 /* Begin PBXFileReference section */
 		4A1DA82D27383784000D5725 /* MutanusFileManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutanusFileManger.swift; sourceTree = "<group>"; };
 		4A1DA83127384909000D5725 /* MutanusError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutanusError.swift; sourceTree = "<group>"; };
+		4A32ECCF27387B1E00FE5212 /* BackupFilesStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupFilesStep.swift; sourceTree = "<group>"; };
 		4A4CAF2127322A3B0003410B /* RemoveSideEffectsOperator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoveSideEffectsOperator.swift; sourceTree = "<group>"; };
 		4A4CAF2227322A3B0003410B /* ChangeLogicalConnectorOperator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeLogicalConnectorOperator.swift; sourceTree = "<group>"; };
 		4A4CAF2327322A3B0003410B /* MutationOperator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutationOperator.swift; sourceTree = "<group>"; };
@@ -525,6 +527,7 @@
 				OBJ_21 /* ReferenceRunStep.swift */,
 				OBJ_18 /* ExtractSourceFilesStep.swift */,
 				OBJ_19 /* FindMutantsStep.swift */,
+				4A32ECCF27387B1E00FE5212 /* BackupFilesStep.swift */,
 				OBJ_20 /* MutationTestingStep.swift */,
 			);
 			path = Steps;
@@ -1051,6 +1054,7 @@
 				OBJ_208 /* MutanusSequanceStep.swift in Sources */,
 				4A4CAF3C27322AEA0003410B /* RegularExpressionExtensions.swift in Sources */,
 				OBJ_209 /* PerformsAction.swift in Sources */,
+				4A32ECD027387B1E00FE5212 /* BackupFilesStep.swift in Sources */,
 				OBJ_210 /* ExtractSourceFilesStep.swift in Sources */,
 				OBJ_211 /* FindMutantsStep.swift in Sources */,
 				OBJ_212 /* MutationTestingStep.swift in Sources */,

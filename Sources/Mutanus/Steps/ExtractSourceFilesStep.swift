@@ -1,7 +1,4 @@
 //
-//  ExtractSourceFilesStep.swift
-//  Mutanus
-//
 //  Created by Iurii Sorokin on 03.11.2021.
 //
 

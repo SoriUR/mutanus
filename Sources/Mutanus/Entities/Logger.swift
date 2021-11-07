@@ -7,17 +7,19 @@ import Foundation
 enum LoggerEvent {
     case receivedParameters(MutationParameters)
 
-    case referenceRunStart
+    case referenceRunStarted
     case referenceRunFinished(result: ExecutionResult)
 
-    case sourceFilesStart
+    case sourceFilesStarted
     case sourceFilesFinished(sources: [String])
 
-    case findMutantsStart
+    case findMutantsStarted
     case findMutantsFinished(result: MutantsInfo)
 
-    case mutationTestingStarted(count: Int)
-    case mutationTestingFinished(duration: TimeInterval, total: Int, killed: Int, survived: Int)
+    case filesBackupStared
+
+    case mutationTestingStarted
+    case mutationTestingFinished(total: Int, killed: Int, survived: Int)
 
     case mutationIterationStarted(index: Int)
     case mutationIterationFinished(duration: TimeInterval, result: ExecutionResult)
@@ -30,32 +32,35 @@ enum Logger  {
         case let .receivedParameters(parameters):
             logReceivedParameters(parameters)
 
-        case .referenceRunStart:
-            printOutput(title: "Reference Run Started")
+        case .referenceRunStarted:
+            printOutput(title: "Runing reference tests")
 
         case let .referenceRunFinished(result):
             logReferenceRunFinished(result)
 
-        case .sourceFilesStart:
-            printOutput(title: "Extract Source Files")
+        case .sourceFilesStarted:
+            printOutput(title: "Extracting source files")
 
         case let .sourceFilesFinished(result):
             logSourceFilesFinished(result)
 
-        case .findMutantsStart:
-            printOutput(title: "Search for Mutants")
+        case .findMutantsStarted:
+            printOutput(title: "Searching for Mutants")
 
         case let .findMutantsFinished(result):
             logFindMutantsFinished(result)
 
-        case let .mutationTestingStarted(count):
-            printOutput(title: "Mutation Testing Started. Total Iterations Count: \(count)")
+        case .filesBackupStared:
+            printOutput(title: "Making file backups")
 
-        case let .mutationTestingFinished(duration, total, killed, survived):
-            logMutationTestingFinished(duration, total, killed, survived)
+        case .mutationTestingStarted:
+            printOutput(title: "Executing mutation testing")
+
+        case let .mutationTestingFinished(total, killed, survived):
+            logMutationTestingFinished(total, killed, survived)
 
         case let .mutationIterationStarted(index):
-            printOutput(title: "Mutation Iterations Number: \(index)")
+            printOutput(title: "Mutation iterations Number: \(index)")
 
         case let .mutationIterationFinished(duration, result):
             logMutationIterationFinished(duration, result)
@@ -63,7 +68,7 @@ enum Logger  {
     }
 
     static func logStepDuration(_ duration: TimeInterval) {
-        print(String(format: "    Step Duration: %.2f", duration))
+        print(String(format: "\n    Step Duration: %.2f sec", duration))
     }
 }
 
@@ -120,18 +125,16 @@ private extension Logger {
     }
 
     static func logMutationTestingFinished(
-        _ duration: TimeInterval,
         _ total: Int,
         _ killed: Int,
         _ survived: Int
     ) {
+        let score = Float(killed)/Float(total) * 100
         let content = """
-            Duration: \(duration.rounded()) sec
             Mutants Count: \(total)
             Mutants Killed: \(killed)
             Mutants Survived: \(survived)
-            Mutation Score: \(Float(killed)/Float(total))
-
+            \(String(format: "Mutation Score: %.2f", score))%
         """
 
         printOutput(title: "Mutation Testing Result", content: content)

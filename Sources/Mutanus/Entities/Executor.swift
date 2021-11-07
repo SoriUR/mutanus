@@ -6,22 +6,13 @@ import Foundation
 
 struct Executor {
 
-    struct Info {
-        let duration: TimeInterval
-        let logURL: URL
+    let parameters: MutationParameters
+
+    init(parameters: MutationParameters) {
+        self.parameters = parameters
     }
 
-    let fileManager: MutanusFileManger
-
-    init(fileManager: MutanusFileManger) {
-        self.fileManager = fileManager
-    }
-
-    func executeProccess(with parameters: MutationParameters) throws -> Info {
-
-        let logPath = fileManager.logFilePath(appending: Constants.logFileName)
-        fileManager.createEmptyFile(atPath: logPath)
-        let logURL = URL(fileURLWithPath: logPath)
+    func executeProccess(logURL: URL) throws {
         let logHandle = try FileHandle(forWritingTo: logURL)
 
         let process = Process()
@@ -30,24 +21,8 @@ struct Executor {
         process.standardOutput = logHandle
         process.standardError = logHandle
 
-        let startTime = Date()
-
         try process.run()
         process.waitUntilExit()
-
-        let duration = startTime.distance(to: Date())
-
         logHandle.closeFile()
-
-        return Info(
-            duration: duration,
-            logURL: logURL
-        )
-    }
-}
-
-private extension Executor {
-    enum Constants {
-        static let logFileName = "MutanusExecutionLogFile.txt"
     }
 }
