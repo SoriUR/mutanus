@@ -34,53 +34,41 @@ final class Mutanus {
 
         let sequence = StepsSequence()
 
-        let referenceRunStep = ReferenceRunStep(
-            parameters: parameters,
-            executor: executor,
-            resultParser: ExecutionResultParser()
-        )
-        referenceRunStep.delegate = self
-
-        let sourceFilesStep = ExtractSourceFilesStep(
-            fileManager: fileManager,
-            parameters: parameters
-        )
-        sourceFilesStep.delegate = self
-
-        let mutantsStep = FindMutantsStep()
-        mutantsStep.delegate = self
-
-        let mutationtestingStep = MutationTestingStep(
-            parameters: parameters,
-            executor: executor,
-            resultParser: ExecutionResultParser()
-        )
-        mutationtestingStep.delegate = self
-
         sequence
-            .next(referenceRunStep)
-            .next(sourceFilesStep)
-            .next(mutantsStep)
-            .next(mutationtestingStep)
+            .next(ReferenceRunStep(
+                parameters: parameters,
+                executor: executor,
+                resultParser: ExecutionResultParser(),
+                delegate: self
+            ))
+            .next(ExtractSourceFilesStep(
+                fileManager: fileManager,
+                parameters: parameters,
+                delegate: self
+            ))
+            .next(FindMutantsStep(delegate: self))
+            .next(MutationTestingStep(
+                parameters: parameters,
+                executor: executor,
+                resultParser: ExecutionResultParser(),
+                delegate: self
+            ))
 
         try sequence.start()
     }
 }
 
+// MARK: - MutanusSequanceStepDelegate
 extension Mutanus: MutanusSequanceStepDelegate {
-
-    enum StepType: Int {
-        case referenceRun
-        case sourceFiles
-        case findMutatants
-        case mutationTesting
-    }
 
     func stepFinished<T: ChainLink>(_ step: T, result: T.Result) throws {
 
         switch step {
         case is ReferenceRunStep:
             try handleReferenceStepResult(result as! ReferenceRunStep.Result)
+
+        case is ExtractSourceFilesStep:
+            try handleSourcesStepResult(result as! ExtractSourceFilesStep.Result)
 
         default:
             break
@@ -96,6 +84,10 @@ extension Mutanus: MutanusSequanceStepDelegate {
         switch step {
         case is ReferenceRunStep:
             Logger.logEvent(.referenceRunStart)
+
+        case is ExtractSourceFilesStep:
+            Logger.logEvent(.sourceFilesStart)
+
         default:
             break
         }
@@ -110,5 +102,11 @@ private extension Mutanus {
         guard result == .testSucceeded else {
             throw MutanusError.moduleTestFailed
         }
+    }
+
+    func handleSourcesStepResult(_ result: ExtractSourceFilesStep.Result) throws {
+        Logger.logEvent(.sourceFilesFinished(sources: result))
+
+        guard !result.isEmpty else { throw MutanusError.emptySources }
     }
 }

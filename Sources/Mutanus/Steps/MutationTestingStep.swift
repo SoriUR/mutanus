@@ -16,11 +16,13 @@ final class MutationTestingStep: MutanusSequanceStep {
     init(
         parameters: MutationParameters,
         executor: Executor,
-        resultParser: ExecutionResultParser
+        resultParser: ExecutionResultParser,
+        delegate: MutanusSequanceStepDelegate?
     ) {
         self.parameters = parameters
         self.executor = executor
         self.resultParser = resultParser
+        self.delegate = delegate
     }
 
     // MARK: - MutanusSequanceStep

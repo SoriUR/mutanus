@@ -6,10 +6,16 @@ import Foundation
 
 enum LoggerEvent {
     case receivedParameters(MutationParameters)
+
     case referenceRunStart
     case referenceRunFinished(result: ExecutionResult)
+
+    case sourceFilesStart
+    case sourceFilesFinished(sources: [String])
+
     case mutationTestingStarted(count: Int)
     case mutationTestingFinished(duration: TimeInterval, total: Int, killed: Int, survived: Int)
+
     case mutationIterationStarted(index: Int)
     case mutationIterationFinished(duration: TimeInterval, result: ExecutionResult)
 }
@@ -23,6 +29,12 @@ enum Logger  {
 
         case let .referenceRunFinished(result):
             logReferenceRunFinished(result)
+
+        case .sourceFilesStart:
+            printOutput(title: "Extract Source Files")
+
+        case let .sourceFilesFinished(result):
+            logSourceFilesFinished(result)
 
         case let .receivedParameters(parameters):
             logReceivedParameters(parameters)
@@ -62,6 +74,17 @@ private extension Logger {
     static func logReferenceRunFinished(_ result: ExecutionResult) {
         let content = """
             Result: \(result.pretty)
+        """
+        printOutput(title: nil, content: content)
+    }
+
+    static func logSourceFilesFinished(_ result: [String]) {
+        let str = result.reduce(into: "") { result, current in
+            result += "    \(URL(fileURLWithPath: current).lastPathComponent)\n"
+        }
+        let content = """
+            Source files:
+        \(str)
         """
         printOutput(title: nil, content: content)
     }

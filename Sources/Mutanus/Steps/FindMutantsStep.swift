@@ -15,6 +15,10 @@ final class FindMutantsStep: MutanusSequanceStep {
     var next: AnyPerformsAction<Result>?
     var delegate: MutanusSequanceStepDelegate?
 
+    init(delegate: MutanusSequanceStepDelegate?) {
+        self.delegate = delegate
+    }
+
     func executeStep(_ context: Context) throws -> Result {
         var result = [String: (SourceFileSyntax, [MutationPoint])]()
 

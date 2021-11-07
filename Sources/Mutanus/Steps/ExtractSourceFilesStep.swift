@@ -17,10 +17,12 @@ final class ExtractSourceFilesStep: MutanusSequanceStep {
 
     init(
         fileManager: MutanusFileManger,
-        parameters: MutationParameters
+        parameters: MutationParameters,
+        delegate: MutanusSequanceStepDelegate?
     ) {
         self.fileManager = fileManager
         self.parameters = parameters
+        self.delegate = delegate
     }
 
     // MARK: - MutanusSequanceStep
