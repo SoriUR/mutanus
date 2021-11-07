@@ -13,6 +13,9 @@ enum LoggerEvent {
     case sourceFilesStart
     case sourceFilesFinished(sources: [String])
 
+    case findMutantsStart
+    case findMutantsFinished(result: MutantsInfo)
+
     case mutationTestingStarted(count: Int)
     case mutationTestingFinished(duration: TimeInterval, total: Int, killed: Int, survived: Int)
 
@@ -24,6 +27,9 @@ enum Logger  {
 
     static func logEvent(_ event: LoggerEvent) {
         switch event {
+        case let .receivedParameters(parameters):
+            logReceivedParameters(parameters)
+
         case .referenceRunStart:
             printOutput(title: "Reference Run Started")
 
@@ -36,8 +42,11 @@ enum Logger  {
         case let .sourceFilesFinished(result):
             logSourceFilesFinished(result)
 
-        case let .receivedParameters(parameters):
-            logReceivedParameters(parameters)
+        case .findMutantsStart:
+            printOutput(title: "Search for Mutants")
+
+        case let .findMutantsFinished(result):
+            logFindMutantsFinished(result)
 
         case let .mutationTestingStarted(count):
             printOutput(title: "Mutation Testing Started. Total Iterations Count: \(count)")
@@ -83,7 +92,20 @@ private extension Logger {
             result += "    \(URL(fileURLWithPath: current).lastPathComponent)\n"
         }
         let content = """
-            Source files:
+        \(str)
+        """
+        printOutput(title: nil, content: content)
+    }
+
+    static func logFindMutantsFinished(_ result: MutantsInfo) {
+        var str = ""
+        for (key, value) in result.mutants {
+            str += "    \(URL(fileURLWithPath: key).lastPathComponent): \(value.1.count) mutants\n"
+        }
+        let content = """
+            Total Mutants: \(result.totalCount)
+            Max Mutants in a file: \(result.maxFileCount)
+
         \(str)
         """
         printOutput(title: nil, content: content)

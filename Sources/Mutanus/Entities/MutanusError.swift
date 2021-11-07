@@ -5,5 +5,6 @@
 enum MutanusError: Error {
     case moduleTestFailed
     case emptySources
+    case zeroMutants
 }
 

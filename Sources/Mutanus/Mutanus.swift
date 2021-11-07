@@ -61,23 +61,6 @@ final class Mutanus {
 // MARK: - MutanusSequanceStepDelegate
 extension Mutanus: MutanusSequanceStepDelegate {
 
-    func stepFinished<T: ChainLink>(_ step: T, result: T.Result) throws {
-
-        switch step {
-        case is ReferenceRunStep:
-            try handleReferenceStepResult(result as! ReferenceRunStep.Result)
-
-        case is ExtractSourceFilesStep:
-            try handleSourcesStepResult(result as! ExtractSourceFilesStep.Result)
-
-        default:
-            break
-        }
-
-        let stepDuration = stepStartDate.distance(to: Date())
-        Logger.logStepDuration(stepDuration)
-    }
-
     func stepStarted<T: ChainLink>(_ step: T) {
         stepStartDate = Date()
 
@@ -88,9 +71,32 @@ extension Mutanus: MutanusSequanceStepDelegate {
         case is ExtractSourceFilesStep:
             Logger.logEvent(.sourceFilesStart)
 
+        case is FindMutantsStep:
+            Logger.logEvent(.findMutantsStart)
+
         default:
             break
         }
+    }
+
+    func stepFinished<T: ChainLink>(_ step: T, result: T.Result) throws {
+
+        switch step {
+        case is ReferenceRunStep:
+            try handleReferenceStepResult(result as! ReferenceRunStep.Result)
+
+        case is ExtractSourceFilesStep:
+            try handleSourcesStepResult(result as! ExtractSourceFilesStep.Result)
+
+        case is FindMutantsStep:
+            try handleFindMutantsStepResult(result as! FindMutantsStep.Result)
+
+        default:
+            break
+        }
+
+        let stepDuration = stepStartDate.distance(to: Date())
+        Logger.logStepDuration(stepDuration)
     }
 }
 
@@ -108,5 +114,11 @@ private extension Mutanus {
         Logger.logEvent(.sourceFilesFinished(sources: result))
 
         guard !result.isEmpty else { throw MutanusError.emptySources }
+    }
+
+    func handleFindMutantsStepResult(_ result: FindMutantsStep.Result) throws {
+        Logger.logEvent(.findMutantsFinished(result: result))
+
+        guard result.totalCount != 0 else { throw MutanusError.zeroMutants }
     }
 }
