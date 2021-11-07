@@ -75,6 +75,12 @@ enum Logger  {
     static func logStepDuration(_ duration: TimeInterval) {
         print(String(format: "\n    Step Duration: %.2f sec", duration))
     }
+
+    static func logTotalDuration(_ duration: TimeInterval) {
+        print(String(format: "\n    Total Duration: %.2f sec", duration))
+    }
+
+
 }
 
 // MARK: - Private

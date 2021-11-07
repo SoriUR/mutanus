@@ -35,6 +35,8 @@ final class Mutanus {
 
         let sequence = StepsSequence()
 
+        let startDate = Date()
+
         sequence
             .next(ReferenceRunStep(
                 executor: executor,
@@ -60,6 +62,9 @@ final class Mutanus {
             ))
 
         try sequence.start()
+
+        let duration = startDate.distance(to: Date())
+        Logger.logTotalDuration(duration)
     }
 }
 
