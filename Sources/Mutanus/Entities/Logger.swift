@@ -22,7 +22,12 @@ enum LoggerEvent {
     case mutationTestingFinished(total: Int, killed: Int, survived: Int)
 
     case mutationIterationStarted(index: Int)
-    case mutationIterationFinished(duration: TimeInterval, result: ExecutionResult)
+    case mutationIterationFinished(
+            duration: TimeInterval,
+            result: ExecutionResult,
+            killed: Int,
+            survived: Int
+         )
 }
 
 enum Logger  {
@@ -62,8 +67,8 @@ enum Logger  {
         case let .mutationIterationStarted(index):
             printOutput(title: "Mutation iterations Number: \(index)")
 
-        case let .mutationIterationFinished(duration, result):
-            logMutationIterationFinished(duration, result)
+        case let .mutationIterationFinished(duration, result, killed, survived):
+            logMutationIterationFinished(duration, result, killed, survived)
         }
     }
 
@@ -116,10 +121,13 @@ private extension Logger {
         printOutput(title: nil, content: content)
     }
 
-    static func logMutationIterationFinished(_ duration: TimeInterval, _ result: ExecutionResult) {
+    static func logMutationIterationFinished(_ duration: TimeInterval, _ result: ExecutionResult, _ killed: Int, _ survived: Int) {
         let content = """
-            Duration: \(duration.rounded()) sec
             Result: \(result.pretty)
+            Killed: \(killed)
+            Survived: \(survived)
+            Duration: \(duration.rounded()) sec
+
         """
         printOutput(title: nil, content: content)
     }

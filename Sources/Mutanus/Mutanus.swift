@@ -54,7 +54,7 @@ final class Mutanus {
             ))
             .next(MutationTestingStep(
                 executor: executor,
-                resultParser: ExecutionResultParser(),
+                resultParser: MutationResultParser(),
                 fileManager: fileManager,
                 delegate: self
             ))
