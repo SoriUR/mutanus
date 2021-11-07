@@ -37,6 +37,15 @@ final class MutationTestingStep: MutanusSequanceStep {
         for i in 0..<mutantsMaxCount {
             Logger.logEvent(.mutationIterationStarted(index: i+1))
 
+            for (_, value) in context {
+                let mutationPoints = value.1
+
+                guard i < mutationPoints.count else { continue }
+
+                let sourceCode = value.0
+                insertMutant(at: mutationPoints[i], within: sourceCode)
+            }
+
             let info = try executor.executeProccess(with: parameters)
             let executionResult = ExecutionResultParser.recognizeResult(in: info.logURL)
 
@@ -57,5 +66,27 @@ final class MutationTestingStep: MutanusSequanceStep {
         }
 
         Logger.logEvent(.mutationTestingFinished(duration: duration, total: mutantsMaxCount, killed: killedCount, survived: survivedCount))
+    }
+
+    private func backupFile(at path: String, using swapFilePaths: [String: String]) {
+        let swapFilePath = swapFilePaths[path]!
+        copySourceCode(fromFileAt: path, to: swapFilePath)
+    }
+
+    private func restoreFile(at path: String, using swapFilePaths: [String: String]) {
+        let swapFilePath = swapFilePaths[path]!
+        copySourceCode(fromFileAt: swapFilePath, to: path)
+    }
+
+    private func insertMutant(at mutationPoint: MutationPoint, within sourceCode: SourceFileSyntax) {
+        let mutatedSource = mutationPoint.mutationOperator(sourceCode).mutatedSource
+        var path = mutationPoint.filePath
+        path.removeFirst(7)
+        try! mutatedSource.description.write(toFile: path, atomically: true, encoding: .utf8)
+    }
+
+    private func copySourceCode(fromFileAt sourcePath: String, to destinationPath: String) {
+        let source = sourceCode(fromFileAt: sourcePath)
+        try? source?.code.description.write(toFile: destinationPath, atomically: true, encoding: .utf8)
     }
 }

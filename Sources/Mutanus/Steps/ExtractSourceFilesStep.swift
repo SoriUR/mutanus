@@ -32,7 +32,7 @@ final class ExtractSourceFilesStep: MutanusSequanceStep {
             guard exists else { return }
 
             let paths: [String] = isDirectory
-                ? fileManager.subpaths(atPath: path) ?? []
+                ? (fileManager.subpaths(atPath: path) ?? []).map { path + $0 }
                 : [path]
 
             let filteredPaths = paths
