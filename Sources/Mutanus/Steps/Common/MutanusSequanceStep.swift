@@ -2,13 +2,22 @@
 //  Created by Iurii Sorokin on 03.11.2021.
 //
 
+protocol MutanusSequanceStepDelegate: AnyObject {
+    func stepStarted<T: ChainLink>(_ step: T)
+    func stepFinished<T: ChainLink>(_ step: T, result: T.Result) throws
+}
+
 protocol MutanusSequanceStep: ChainLink {
-    func performStep(_ context: Context) throws -> Result
+    var delegate: MutanusSequanceStepDelegate? { get }
+
+    func executeStep(_ context: Context) throws -> Result
 }
 
 extension MutanusSequanceStep {
     func perform(_ context: Context) throws {
-        let result = try  performStep(context)
+        delegate?.stepStarted(self)
+        let result = try executeStep(context)
+        try delegate?.stepFinished(self, result: result)
         try next?.perform(result)
     }
 }

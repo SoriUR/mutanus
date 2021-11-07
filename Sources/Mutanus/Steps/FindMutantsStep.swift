@@ -10,11 +10,12 @@ import SwiftSyntax
 
 final class FindMutantsStep: MutanusSequanceStep {
     typealias Context = [String]
-    typealias Result = [String: (SourceFileSyntax, [MutationPoint])]
+    typealias Result = MutantsInfo
 
     var next: AnyPerformsAction<Result>?
+    var delegate: MutanusSequanceStepDelegate?
 
-    func performStep(_ context: Context) throws -> Result {
+    func executeStep(_ context: Context) throws -> Result {
         var result = [String: (SourceFileSyntax, [MutationPoint])]()
 
         context.forEach { path in
@@ -32,7 +33,26 @@ final class FindMutantsStep: MutanusSequanceStep {
             result[path] = (source.code, mutationPoints)
         }
 
-        return result.filter { $0.value.1.count > 0 }
+        let filtered = result.filter { $0.value.1.count > 0 }
+
+        guard !filtered.isEmpty else {
+            fatalError("no mutants")
+        }
+
+        var maxCount = Int.min
+        var totalCount: Int = 0
+
+        filtered.forEach {
+            let mutantsCount = $0.value.1.count
+            maxCount = mutantsCount > maxCount ? mutantsCount : maxCount
+            totalCount += mutantsCount
+        }
+
+        return .init(
+            mutants: filtered,
+            totalCount: totalCount,
+            maxFileCount: maxCount
+        )
     }
 
     private func findMutationPoints(in file: SourceCodeInfo) -> [MutationPoint] {
@@ -59,4 +79,10 @@ final class FindMutantsStep: MutanusSequanceStep {
 func sourceCode(fromFileAt path: String) -> SourceCodeInfo? {
     let url = URL(fileURLWithPath: path)
     return (try? SyntaxParser.parse(url)).map { SourceCodeInfo(path: url.absoluteString, code: $0) }
+}
+
+struct MutantsInfo {
+    let mutants: [String: (SourceFileSyntax, [MutationPoint])]
+    let totalCount: Int
+    let maxFileCount: Int
 }
