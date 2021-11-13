@@ -17,6 +17,7 @@ protocol MutanusFileManger {
     func fileExists(atPath path: String) -> (exists: Bool, isDirectory: Bool)
     func createBackupFile(path: String)
     func restoreFileFromBackup(path: String)
+    func createReportFile(contents: Data)
 }
 
 extension FileManager: MutanusFileManger {
@@ -48,6 +49,10 @@ extension FileManager: MutanusFileManger {
         try! removeItem(atPath: path)
         try! copyItem(atPath: backupFilePath, toPath: path)
         try! removeItem(atPath: backupFilePath)
+    }
+
+    func createReportFile(contents: Data) {
+        createFile(atPath: currentDirectoryPath+"/MutanusReport.json", contents: contents)
     }
 
     // MARK: - Private

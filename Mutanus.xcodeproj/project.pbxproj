@@ -41,10 +41,11 @@
 		4A547A2B27401E84009D3E60 /* ReportTiming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A547A2A27401E84009D3E60 /* ReportTiming.swift */; };
 		4A547A2C27401E93009D3E60 /* ReportScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A547A2827401E45009D3E60 /* ReportScore.swift */; };
 		4A547A2E27401EB3009D3E60 /* ReportMutation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A547A2D27401EB2009D3E60 /* ReportMutation.swift */; };
-		4A547A3027401EF3009D3E60 /* GeneralReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A547A2F27401EF3009D3E60 /* GeneralReport.swift */; };
 		4A547A3227401F12009D3E60 /* IterationsReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A547A3127401F12009D3E60 /* IterationsReport.swift */; };
 		4A547A3427401F1F009D3E60 /* FilesReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A547A3327401F1F009D3E60 /* FilesReport.swift */; };
 		4A547A3627401FA8009D3E60 /* ReportCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A547A3527401FA8009D3E60 /* ReportCompiler.swift */; };
+		4A547A38274032DD009D3E60 /* PublishReportStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A547A37274032DD009D3E60 /* PublishReportStep.swift */; };
+		4A547A3A27403BE9009D3E60 /* GenericStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A547A3927403BE9009D3E60 /* GenericStep.swift */; };
 		OBJ_151 /* BashCompletionsGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_92 /* BashCompletionsGenerator.swift */; };
 		OBJ_152 /* CompletionsGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_93 /* CompletionsGenerator.swift */; };
 		OBJ_153 /* FishCompletionsGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_94 /* FishCompletionsGenerator.swift */; };
@@ -261,10 +262,11 @@
 		4A547A2827401E45009D3E60 /* ReportScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportScore.swift; sourceTree = "<group>"; };
 		4A547A2A27401E84009D3E60 /* ReportTiming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportTiming.swift; sourceTree = "<group>"; };
 		4A547A2D27401EB2009D3E60 /* ReportMutation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportMutation.swift; sourceTree = "<group>"; };
-		4A547A2F27401EF3009D3E60 /* GeneralReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralReport.swift; sourceTree = "<group>"; };
 		4A547A3127401F12009D3E60 /* IterationsReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IterationsReport.swift; sourceTree = "<group>"; };
 		4A547A3327401F1F009D3E60 /* FilesReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesReport.swift; sourceTree = "<group>"; };
 		4A547A3527401FA8009D3E60 /* ReportCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportCompiler.swift; sourceTree = "<group>"; };
+		4A547A37274032DD009D3E60 /* PublishReportStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishReportStep.swift; sourceTree = "<group>"; };
+		4A547A3927403BE9009D3E60 /* GenericStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericStep.swift; sourceTree = "<group>"; };
 		"Mutanus::Mutanus::Product" /* Mutanus */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = Mutanus; sourceTree = BUILT_PRODUCTS_DIR; };
 		"Mutanus::MutanusTests::Product" /* MutanusTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = MutanusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* Executor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Executor.swift; sourceTree = "<group>"; };
@@ -495,7 +497,6 @@
 			isa = PBXGroup;
 			children = (
 				4A547A2527401E23009D3E60 /* Report.swift */,
-				4A547A2F27401EF3009D3E60 /* GeneralReport.swift */,
 				4A547A3127401F12009D3E60 /* IterationsReport.swift */,
 				4A547A3327401F1F009D3E60 /* FilesReport.swift */,
 				4A547A2827401E45009D3E60 /* ReportScore.swift */,
@@ -568,6 +569,8 @@
 				OBJ_19 /* FindMutantsStep.swift */,
 				4A32ECCF27387B1E00FE5212 /* BackupFilesStep.swift */,
 				OBJ_20 /* MutationTestingStep.swift */,
+				4A547A37274032DD009D3E60 /* PublishReportStep.swift */,
+				4A547A3927403BE9009D3E60 /* GenericStep.swift */,
 			);
 			path = Steps;
 			sourceTree = "<group>";
@@ -1091,7 +1094,6 @@
 				4A4CAF2B27322A3B0003410B /* MutationOperatorSnapshot.swift in Sources */,
 				4A547A3227401F12009D3E60 /* IterationsReport.swift in Sources */,
 				OBJ_206 /* Mutanus.swift in Sources */,
-				4A547A3027401EF3009D3E60 /* GeneralReport.swift in Sources */,
 				OBJ_207 /* ChainLink.swift in Sources */,
 				4A4CAF3427322A760003410B /* SourceInfo.swift in Sources */,
 				4A1DA83227384909000D5725 /* MutanusError.swift in Sources */,
@@ -1114,6 +1116,8 @@
 				4A4CAF2E27322A3B0003410B /* ROROperator.swift in Sources */,
 				OBJ_213 /* ReferenceRunStep.swift in Sources */,
 				OBJ_214 /* StepsSequence.swift in Sources */,
+				4A547A3A27403BE9009D3E60 /* GenericStep.swift in Sources */,
+				4A547A38274032DD009D3E60 /* PublishReportStep.swift in Sources */,
 				4A4CAF3827322AB40003410B /* StringExtensions.swift in Sources */,
 				4A4CAF2A27322A3B0003410B /* MutationOperator.swift in Sources */,
 				OBJ_223 /* main.swift in Sources */,

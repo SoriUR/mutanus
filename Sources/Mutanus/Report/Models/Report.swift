@@ -5,7 +5,14 @@
 import Foundation
 
 struct Report: Encodable {
-    var general: GeneralReport
-    var files: [FilesReport]
-    var iterations: [IterationsReport]
+
+    let projectRoot: String
+    let executable: String
+    let arguments: String
+
+    var timing: ReportTiming?
+    var score: ReportScore?
+
+    var files: FilesReport?
+    var iterations: IterationsReport?
 }

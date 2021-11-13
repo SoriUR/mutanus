@@ -46,7 +46,8 @@ struct Entry: ParsableCommand {
         try Mutanus(
             parameters: parameters,
             executor: Executor(parameters: parameters),
-            fileManager: fileManager
+            fileManager: fileManager,
+            reportCompiler: ReportCompiler(parameters: parameters)
         ).start()
     }
 }

@@ -6,24 +6,27 @@ import Foundation
 
 final class ReportCompiler {
 
-    let parameters: MutationParameters
-    var report: Report
+    private var report: Report
 
     init(parameters: MutationParameters) {
-        self.parameters = parameters
+
         self.report = .init(
-            general: .init(
-                projectRoot: parameters.directory,
-                executable: parameters.executable,
-                arguments: parameters.arguments.joined(separator: " "),
-                timing: nil,
-                score: nil,
-                files: nil,
-                iterations: nil
-            ),
-            files: [],
-            iterations: []
+            projectRoot: parameters.directory,
+            executable: parameters.executable,
+            arguments: parameters.arguments.joined(separator: " "),
+            timing: nil,
+            score: nil,
+            files: nil,
+            iterations: nil
         )
+    }
+
+    func executionStarted(at date: Date) {
+        report.timing = .init(startedAt: date, duration: 0)
+    }
+
+    func executionDuration(_ duration: TimeInterval) {
+        report.timing?.duration = duration
     }
 
     func compile() -> Report {

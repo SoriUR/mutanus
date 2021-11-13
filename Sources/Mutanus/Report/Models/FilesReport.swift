@@ -5,8 +5,15 @@
 import Foundation
 
 struct FilesReport: Encodable {
-    let path: String
 
-    let score: ReportScore
-    let mutations: [ReportMutation]
+    struct File: Encodable {
+        let path: String
+        let score: ReportScore
+        let mutations: [ReportMutation]
+    }
+
+    let count: Int
+    let max_mutants: Int
+    let average_mutants: Int
+    let items: [File]
 }

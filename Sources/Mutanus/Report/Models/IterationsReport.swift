@@ -5,9 +5,16 @@
 import Foundation
 
 struct IterationsReport: Encodable {
-    let number: Int
 
-    let timing: ReportTiming
-    let score: ReportScore
-    let mutations: [ReportMutation]
+    struct Iteration: Encodable {
+        let timing: ReportTiming
+        let score: ReportScore
+        let mutations: [ReportMutation]
+    }
+
+    let count: Int
+    let max_duration: TimeInterval
+    let average_duration: TimeInterval
+
+    let items: [Iteration]
 }

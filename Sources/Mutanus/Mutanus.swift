@@ -16,17 +16,21 @@ final class Mutanus {
     let parameters: MutationParameters
     let executor: Executor
     let fileManager: MutanusFileManger
+    let reportCompiler: ReportCompiler
 
-    var stepStartDate: Date!
+    private var stepStartDate: Date!
+    private var totalStartTime: Date!
 
     init(
         parameters: MutationParameters,
         executor: Executor,
-        fileManager: MutanusFileManger
+        fileManager: MutanusFileManger,
+        reportCompiler: ReportCompiler
     ) {
         self.parameters = parameters
         self.executor = executor
         self.fileManager = fileManager
+        self.reportCompiler = reportCompiler
     }
 
     func start() throws {
@@ -35,7 +39,8 @@ final class Mutanus {
 
         let sequence = StepsSequence()
 
-        let startDate = Date()
+        totalStartTime = Date()
+        reportCompiler.executionStarted(at: totalStartTime)
 
         sequence
             .next(ReferenceRunStep(
@@ -54,17 +59,29 @@ final class Mutanus {
                 fileManager: fileManager,
                 delegate: self
             ))
-            .next(MutationTestingStep(
-                executor: executor,
-                resultParser: MutationResultParser(),
+//            .next(MutationTestingStep(
+//                executor: executor,
+//                resultParser: MutationResultParser(),
+//                fileManager: fileManager,
+//                delegate: self
+//            ))
+            .next(GenericStep<MutantsInfo, Void>(
+                executeBlock: { [weak self] _ in
+                    guard let self = self else { return }
+
+                    let duration = self.totalStartTime.distance(to: Date())
+                    self.reportCompiler.executionDuration(duration)
+                    Logger.logTotalDuration(duration)
+                },
+                delegate: self
+            ))
+            .next(PublishReportStep(
+                reportCompiler: reportCompiler,
                 fileManager: fileManager,
                 delegate: self
             ))
 
         try sequence.start()
-
-        let duration = startDate.distance(to: Date())
-        Logger.logTotalDuration(duration)
     }
 }
 
