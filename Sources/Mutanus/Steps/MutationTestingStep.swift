@@ -77,7 +77,7 @@ final class MutationTestingStep: MutanusSequanceStep {
 
             Logger.logEvent(.mutationIterationFinished(
                 duration: iterationDuration,
-                result: .buildFailed,
+                result: executionResult.result,
                 killed: executionResult.killed,
                 survived: executionResult.survived
             ))
