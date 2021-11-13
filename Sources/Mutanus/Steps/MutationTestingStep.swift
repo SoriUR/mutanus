@@ -14,12 +14,12 @@ struct MutationTestingResult {
 final class MutationTestingStep: MutanusSequanceStep {
 
     let executor: Executor
-    let resultParser: ExecutionResultParser
+    let resultParser: MutationResultParser
     let fileManager: MutanusFileManger
 
     init(
         executor: Executor,
-        resultParser: ExecutionResultParser,
+        resultParser: MutationResultParser,
         fileManager: MutanusFileManger,
         delegate: MutanusSequanceStepDelegate?
     ) {
@@ -42,7 +42,11 @@ final class MutationTestingStep: MutanusSequanceStep {
         var mutationResults = [ExecutionResult]()
         mutationResults.reserveCapacity(context.maxFileCount)
 
-        for i in 1..<3 {
+        var survivedCount = 0
+        var killedCount = 0
+        var mutatingPaths: [String] = context.mutants.keys.map { $0 }
+
+        for i in 0..<context.maxFileCount {
 
             let iterationStartTime = Date()
 
@@ -62,24 +66,24 @@ final class MutationTestingStep: MutanusSequanceStep {
             try executor.executeProccess(logURL: logURL)
 
             let iterationDuration = iterationStartTime.distance(to: Date())
-            let executionResult = resultParser.recognizeResult(in: logURL)
 
-            Logger.logEvent(.mutationIterationFinished(duration: iterationDuration, result: executionResult))
+            let executionResult = resultParser.recognizeResult(fileURL: logURL, paths: mutatingPaths)
+            mutationResults.append(executionResult.result)
 
             for (key, value) in context.mutants where i == (value.1.count - 1) {
+                mutatingPaths.removeAll { $0 == key }
                 fileManager.restoreFileFromBackup(path: key)
             }
 
-            mutationResults.append(executionResult)
-        }
+            Logger.logEvent(.mutationIterationFinished(
+                duration: iterationDuration,
+                result: .buildFailed,
+                killed: executionResult.killed,
+                survived: executionResult.survived
+            ))
 
-        var survivedCount = 0
-        var killedCount = 0
-
-        mutationResults.forEach { result in
-            let increment = result == .testSucceeded ? 0 : 1
-            killedCount += increment
-            survivedCount += 1 - increment
+            survivedCount += executionResult.survived
+            killedCount += executionResult.killed
         }
 
         return MutationTestingResult(

@@ -35,6 +35,8 @@ final class Mutanus {
 
         let sequence = StepsSequence()
 
+        let startDate = Date()
+
         sequence
             .next(ReferenceRunStep(
                 executor: executor,
@@ -54,12 +56,15 @@ final class Mutanus {
             ))
             .next(MutationTestingStep(
                 executor: executor,
-                resultParser: ExecutionResultParser(),
+                resultParser: MutationResultParser(),
                 fileManager: fileManager,
                 delegate: self
             ))
 
         try sequence.start()
+
+        let duration = startDate.distance(to: Date())
+        Logger.logTotalDuration(duration)
     }
 }
 
