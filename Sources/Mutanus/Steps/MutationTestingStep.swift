@@ -16,17 +16,20 @@ final class MutationTestingStep: MutanusSequanceStep {
     let executor: Executor
     let resultParser: MutationResultParser
     let fileManager: MutanusFileManger
+    let reportCompiler: ReportCompiler
 
     init(
         executor: Executor,
         resultParser: MutationResultParser,
         fileManager: MutanusFileManger,
+        reportCompiler: ReportCompiler,
         delegate: MutanusSequanceStepDelegate?
     ) {
         self.fileManager = fileManager
         self.executor = executor
         self.resultParser = resultParser
         self.delegate = delegate
+        self.reportCompiler = reportCompiler
     }
 
     // MARK: - MutanusSequanceStep
@@ -46,13 +49,17 @@ final class MutationTestingStep: MutanusSequanceStep {
         var killedCount = 0
         var mutatingPaths: [String] = context.mutants.keys.map { $0 }
 
-        for i in 0..<context.maxFileCount {
+        for i in 0..<1 {
 
             let iterationStartTime = Date()
+
+            reportCompiler.iterationStarted(number: i, timeStarted: iterationStartTime)
 
             Logger.logEvent(.mutationIterationStarted(index: i+1))
 
             let logURL = fileManager.createLogFile(name: "Iteration\(i+1).txt")
+
+            var mutations: [(path: String, point: MutationPoint)] = []
 
             for (path, mutantInfo) in context.mutants {
                 let mutationPoints = mutantInfo.points
@@ -60,6 +67,8 @@ final class MutationTestingStep: MutanusSequanceStep {
                 guard i < mutationPoints.count else { continue }
 
                 insertMutant(to: path, mutationPoint: mutationPoints[i], within: mutantInfo.source)
+
+                mutations.append((path, mutationPoints[i]))
             }
 
             try executor.executeProccess(logURL: logURL)
@@ -69,7 +78,19 @@ final class MutationTestingStep: MutanusSequanceStep {
             let executionResult = resultParser.recognizeResult(fileURL: logURL, paths: mutatingPaths)
             mutationResults.append(executionResult.result)
 
-            for (key, value) in context.mutants where i == (value.1.count - 1) {
+            reportCompiler.iterationFinished(.init(
+                number: i,
+                duration: iterationDuration,
+                mutations: mutations.map {
+                    .init(
+                        path: $0.path,
+                        point: $0.point,
+                        result: executionResult.killed.contains($0.path) ? .killed : .survived
+                    )},
+                report: executionResult
+            ))
+
+            for (key, value) in context.mutants where i == (value.points.count - 1) {
                 mutatingPaths.removeAll { $0 == key }
                 fileManager.restoreFileFromBackup(path: key)
             }
@@ -77,12 +98,12 @@ final class MutationTestingStep: MutanusSequanceStep {
             Logger.logEvent(.mutationIterationFinished(
                 duration: iterationDuration,
                 result: executionResult.result,
-                killed: executionResult.killed,
-                survived: executionResult.survived
+                killed: executionResult.killed.count,
+                survived: executionResult.survived.count
             ))
 
-            survivedCount += executionResult.survived
-            killedCount += executionResult.killed
+            survivedCount += executionResult.survived.count
+            killedCount += executionResult.killed.count
         }
 
         return MutationTestingResult(
@@ -91,6 +112,25 @@ final class MutationTestingStep: MutanusSequanceStep {
             killed: killedCount
         )
     }
+}
+
+struct MutationTestingIterationResult1 {
+    let number: Int
+    let started: Date
+}
+
+struct MutationTestingIterationResult {
+
+    struct Mutation {
+        let path: String
+        let point: MutationPoint
+        let result: MutationResult
+    }
+
+    let number: Int
+    let duration: TimeInterval
+    let mutations: [Mutation]
+    let report: ExecutionReport
 }
 
 private extension MutationTestingStep {

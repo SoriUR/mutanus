@@ -62,12 +62,13 @@ final class Mutanus {
                 fileManager: fileManager,
                 delegate: self
             ))
-//            .next(MutationTestingStep(
-//                executor: executor,
-//                resultParser: MutationResultParser(),
-//                fileManager: fileManager,
-//                delegate: self
-//            ))
+            .next(MutationTestingStep(
+                executor: executor,
+                resultParser: MutationResultParser(),
+                fileManager: fileManager,
+                reportCompiler: reportCompiler,
+                delegate: self
+            ))
 //            .next(GenericStep<MutantsInfo, Void>(
 //                executeBlock: { [weak self] _ in
 //                    guard let self = self else { return }
@@ -78,7 +79,7 @@ final class Mutanus {
 //                },
 //                delegate: self
 //            ))
-            .next(CalculateDutationStep<MutantsInfo>(
+            .next(CalculateDutationStep<MutationTestingResult>(
                 startTime: totalStartTime,
                 reportCompiler: reportCompiler,
                 delegate: self

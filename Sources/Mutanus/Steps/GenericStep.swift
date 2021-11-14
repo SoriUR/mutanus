@@ -48,7 +48,7 @@ final class CalculateDutationStep<C>: MutanusSequanceStep {
     // MARK: - MutanusSequanceStep
 
     typealias Context = C
-    typealias Result = C
+    typealias Result = Void
 
     var delegate: MutanusSequanceStepDelegate?
     var next: AnyPerformsAction<Result>?
@@ -56,6 +56,6 @@ final class CalculateDutationStep<C>: MutanusSequanceStep {
     func executeStep(_ context: Context) throws -> Result {
         let duration = startTime.distance(to: Date())
         reportCompiler.executionDuration(duration)
-        return context
+        
     }
 }
