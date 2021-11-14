@@ -8,12 +8,12 @@ struct FilesReport: Encodable {
 
     struct File: Encodable {
         let path: String
-        let score: ReportScore
-        let mutations: [ReportMutation]
+        var score: ReportScore?
+        var mutations: [ReportMutation]
     }
 
     let count: Int
     let max_mutants: Int
     let average_mutants: Int
-    let items: [File]
+    var items: [File]
 }

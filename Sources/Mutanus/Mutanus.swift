@@ -54,7 +54,10 @@ final class Mutanus {
                 parameters: parameters,
                 delegate: self
             ))
-            .next(FindMutantsStep(delegate: self))
+            .next(FindMutantsStep(
+                reportCompiler: reportCompiler,
+                delegate: self
+            ))
             .next(BackupFilesStep(
                 fileManager: fileManager,
                 delegate: self
@@ -65,14 +68,19 @@ final class Mutanus {
 //                fileManager: fileManager,
 //                delegate: self
 //            ))
-            .next(GenericStep<MutantsInfo, Void>(
-                executeBlock: { [weak self] _ in
-                    guard let self = self else { return }
-
-                    let duration = self.totalStartTime.distance(to: Date())
-                    self.reportCompiler.executionDuration(duration)
-                    Logger.logTotalDuration(duration)
-                },
+//            .next(GenericStep<MutantsInfo, Void>(
+//                executeBlock: { [weak self] _ in
+//                    guard let self = self else { return }
+//
+//                    let duration = self.totalStartTime.distance(to: Date())
+//                    self.reportCompiler.executionDuration(duration)
+//                    Logger.logTotalDuration(duration)
+//                },
+//                delegate: self
+//            ))
+            .next(CalculateDutationStep<MutantsInfo>(
+                startTime: totalStartTime,
+                reportCompiler: reportCompiler,
                 delegate: self
             ))
             .next(PublishReportStep(

@@ -9,15 +9,24 @@ import Foundation
 import SwiftSyntax
 
 final class FindMutantsStep: MutanusSequanceStep {
+
+    let reportCompiler: ReportCompiler
+
+    init(
+        reportCompiler: ReportCompiler,
+        delegate: MutanusSequanceStepDelegate?
+    ) {
+        self.reportCompiler = reportCompiler
+        self.delegate = delegate
+    }
+
+    // MARK: - MutanusSequanceStep
+
     typealias Context = [String]
     typealias Result = MutantsInfo
 
     var next: AnyPerformsAction<Result>?
     var delegate: MutanusSequanceStepDelegate?
-
-    init(delegate: MutanusSequanceStepDelegate?) {
-        self.delegate = delegate
-    }
 
     func executeStep(_ context: Context) throws -> Result {
         var result = [String: (SourceFileSyntax, [MutationPoint])]()
@@ -52,11 +61,15 @@ final class FindMutantsStep: MutanusSequanceStep {
             totalCount += mutantsCount
         }
 
-        return .init(
+        let info = MutantsInfo(
             mutants: filtered,
             totalCount: totalCount,
             maxFileCount: maxCount
         )
+
+        reportCompiler.extractedSources(info)
+
+        return info
     }
 
     private func findMutationPoints(in file: SourceCodeInfo) -> [MutationPoint] {
@@ -67,8 +80,7 @@ final class FindMutantsStep: MutanusSequanceStep {
             visitor.walk(file.code)
 
             return newMutationPoints + visitor.positionsOfToken.map { MutationPoint(
-                mutationOperatorId: mutationOperatorId,
-                filePath: file.path,
+                operator: mutationOperatorId,
                 position: $0
             )}
         }
@@ -86,7 +98,7 @@ func sourceCode(fromFileAt path: String) -> SourceCodeInfo? {
 }
 
 struct MutantsInfo {
-    let mutants: [String: (SourceFileSyntax, [MutationPoint])]
+    let mutants: [String: (source: SourceFileSyntax, points: [MutationPoint])]
     let totalCount: Int
     let maxFileCount: Int
 }

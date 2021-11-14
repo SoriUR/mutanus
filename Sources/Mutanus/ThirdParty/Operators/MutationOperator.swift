@@ -6,56 +6,50 @@ typealias RewriterInitializer = (MutationPosition) -> PositionSpecificRewriter
 typealias VisitorInitializer = (SourceFileInfo) -> PositionDiscoveringVisitor
 
 public struct MutationPoint: Equatable, Codable {
-    let mutationOperatorId: MutationOperator
-    let filePath: String
+    let `operator`: MutationOperator
     let position: MutationPosition
     
-    var fileName: String {
-        return URL(fileURLWithPath: self.filePath).lastPathComponent
-    }
-    
-    var mutationOperator: SourceCodeTransformation {
-        return mutationOperatorId.mutationOperator(for: position)
+    var sourceTransformation: SourceCodeTransformation {
+        return self.operator.mutationOperator(for: position)
     }
 }
 
 extension MutationPoint: Nullable {
     static var null: MutationPoint {
         MutationPoint(
-            mutationOperatorId: .removeSideEffects,
-            filePath: "",
+            operator: .removeSideEffect,
             position: .null
         )
     }
 }
 
 enum MutationOperator: String, Codable, CaseIterable {
-    case ror = "RelationalOperatorReplacement"
-    case removeSideEffects = "RemoveSideEffects"
-    case logicalOperator = "ChangeLogicalConnector"
+    case relationReplacement = "RelationalOperatorReplacement"
+    case removeSideEffect = "RemoveSideEffects"
+    case logicalConnector = "ChangeLogicalConnector"
 
     func visitor(_ info: SourceFileInfo) -> PositionDiscoveringVisitor {
         switch self {
-        case .removeSideEffects:
+        case .removeSideEffect:
             return RemoveSideEffectsOperator.Visitor(sourceFileInfo: info)
 
-        case .ror:
+        case .relationReplacement:
             return ROROperator.Visitor(sourceFileInfo: info)
 
-        case .logicalOperator:
+        case .logicalConnector:
             return ChangeLogicalConnectorOperator.Visitor(sourceFileInfo: info)
         }
     }
 
     func rewriter(_ position: MutationPosition) -> PositionSpecificRewriter {
         switch self {
-        case .removeSideEffects:
+        case .removeSideEffect:
             return RemoveSideEffectsOperator.Rewriter(positionToMutate: position)
 
-        case .ror:
+        case .relationReplacement:
             return ROROperator.Rewriter(positionToMutate: position)
 
-        case .logicalOperator:
+        case .logicalConnector:
             return ChangeLogicalConnectorOperator.Rewriter(positionToMutate: position)
         }
     }

@@ -6,5 +6,5 @@ import Foundation
 
 struct ReportTiming: Encodable {
     let startedAt: Date
-    var duration: TimeInterval
+    var duration: TimeInterval?
 }

@@ -15,5 +15,5 @@ struct ReportMutation: Encodable {
     let line: Int
     let column: Int
     let `operator`: MutationOperator
-    let result: Result
+    var result: Result?
 }

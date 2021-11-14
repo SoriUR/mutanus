@@ -22,7 +22,7 @@ final class PublishReportStep: MutanusSequanceStep {
 
     // MARK: - MutanusSequanceStep
 
-    typealias Context = Void
+    typealias Context = MutantsInfo
     typealias Result = Void
 
     var delegate: MutanusSequanceStepDelegate?

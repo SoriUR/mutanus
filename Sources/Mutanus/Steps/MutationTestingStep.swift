@@ -54,13 +54,12 @@ final class MutationTestingStep: MutanusSequanceStep {
 
             let logURL = fileManager.createLogFile(name: "Iteration\(i+1).txt")
 
-            for mutantInfo in context.mutants.values {
-                let mutationPoints = mutantInfo.1
+            for (path, mutantInfo) in context.mutants {
+                let mutationPoints = mutantInfo.points
 
                 guard i < mutationPoints.count else { continue }
 
-                let sourceCode = mutantInfo.0
-                insertMutant(at: mutationPoints[i], within: sourceCode)
+                insertMutant(to: path, mutationPoint: mutationPoints[i], within: mutantInfo.source)
             }
 
             try executor.executeProccess(logURL: logURL)
@@ -96,10 +95,9 @@ final class MutationTestingStep: MutanusSequanceStep {
 
 private extension MutationTestingStep {
 
-    func insertMutant(at mutationPoint: MutationPoint, within sourceCode: SourceFileSyntax) {
-        let mutatedSource = mutationPoint.mutationOperator(sourceCode).mutatedSource
-        var path = mutationPoint.filePath
-        path.removeFirst(7)
+    func insertMutant(to path: String, mutationPoint: MutationPoint, within sourceCode: SourceFileSyntax) {
+        let mutatedSource = mutationPoint.sourceTransformation(sourceCode).mutatedSource
+
         try! mutatedSource.description.write(toFile: path, atomically: true, encoding: .utf8)
     }
 }
