@@ -69,16 +69,6 @@ final class Mutanus {
                 reportCompiler: reportCompiler,
                 delegate: self
             ))
-//            .next(GenericStep<MutantsInfo, Void>(
-//                executeBlock: { [weak self] _ in
-//                    guard let self = self else { return }
-//
-//                    let duration = self.totalStartTime.distance(to: Date())
-//                    self.reportCompiler.executionDuration(duration)
-//                    Logger.logTotalDuration(duration)
-//                },
-//                delegate: self
-//            ))
             .next(CalculateDutationStep<MutationTestingStep.Result>(
                 startTime: totalStartTime,
                 reportCompiler: reportCompiler,
@@ -145,6 +135,20 @@ extension Mutanus: MutanusSequanceStepDelegate {
     }
 }
 
+// MARK: - MutationTestingStepDelegate
+extension Mutanus: MutationTestingStepDelegate {
+    func iterationStated(index: Int) {
+        Logger.logEvent(.mutationIterationStarted(index: index+1))
+    }
+
+    func iterationFinished(duration: TimeInterval, result: ExecutionReport) {
+        Logger.logEvent(.mutationIterationFinished(
+            duration: duration,
+            result: result
+        ))
+    }
+}
+
 // MARK: - Private
 private extension Mutanus {
     func handleReferenceStepResult(_ result: ReferenceRunStep.Result) throws {
@@ -168,6 +172,6 @@ private extension Mutanus {
     }
 
     func handleMutationTestingStepResult(_ result: MutationTestingStep.Result) {
-        Logger.logEvent(.mutationTestingFinished(total: result.total, killed: result.killed, survived: result.survived))
+        Logger.logEvent(.mutationTestingFinished(total: result.total, killed: result.killed))
     }
 }

@@ -25,7 +25,7 @@ final class PublishReportStep: MutanusSequanceStep {
     typealias Context = Void
     typealias Result = Void
 
-    var delegate: MutanusSequanceStepDelegate?
+    weak var delegate: MutanusSequanceStepDelegate?
     var next: AnyPerformsAction<Result>?
 
     func executeStep(_ context: Context) throws -> Result {

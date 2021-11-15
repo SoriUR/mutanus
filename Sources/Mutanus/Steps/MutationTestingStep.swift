@@ -7,8 +7,28 @@ import Foundation
 
 struct MutationTestingResult {
     let total: Int
-    let survived: Int
     let killed: Int
+}
+
+struct MutationTestingIterationReport {
+
+    struct Mutation {
+        let path: String
+        let point: MutationPoint
+        let result: MutationResult
+    }
+
+    let number: Int
+    let started: Date
+    let duration: TimeInterval
+    let mutations: [Mutation]
+    let report: ExecutionReport
+}
+
+
+protocol MutationTestingStepDelegate: MutanusSequanceStepDelegate {
+    func iterationStated(index: Int)
+    func iterationFinished(duration: TimeInterval, result: ExecutionReport)
 }
 
 final class MutationTestingStep: MutanusSequanceStep {
@@ -18,17 +38,19 @@ final class MutationTestingStep: MutanusSequanceStep {
     let fileManager: MutanusFileManger
     let reportCompiler: ReportCompiler
 
+    weak var stepDelegate: MutationTestingStepDelegate?
+
     init(
         executor: Executor,
         resultParser: MutationResultParser,
         fileManager: MutanusFileManger,
         reportCompiler: ReportCompiler,
-        delegate: MutanusSequanceStepDelegate?
+        delegate: MutationTestingStepDelegate?
     ) {
         self.fileManager = fileManager
         self.executor = executor
         self.resultParser = resultParser
-        self.delegate = delegate
+        self.stepDelegate = delegate
         self.reportCompiler = reportCompiler
     }
 
@@ -37,24 +59,22 @@ final class MutationTestingStep: MutanusSequanceStep {
     typealias Context = MutantsInfo
     typealias Result = MutationTestingResult
 
-    var delegate: MutanusSequanceStepDelegate?
+    var delegate: MutanusSequanceStepDelegate? { stepDelegate }
     var next: AnyPerformsAction<Result>?
 
     func executeStep(_ context: Context) throws -> Result {
 
-        var mutationResults = [ExecutionResult]()
-        mutationResults.reserveCapacity(context.maxFileCount)
         var iterationResults: [MutationTestingIterationReport] = []
+        iterationResults.reserveCapacity(context.maxFileCount)
 
-        var survivedCount = 0
         var killedCount = 0
-        var mutatingPaths: [String] = context.mutants.keys.map { $0 }
+        var mutatingFilePaths: [String] = context.mutants.keys.map { $0 }
 
         for i in 0..<3 {
 
             let iterationStartTime = Date()
 
-            Logger.logEvent(.mutationIterationStarted(index: i+1))
+            stepDelegate?.iterationStated(index: i)
 
             let logURL = fileManager.createLogFile(name: "Iteration\(i+1).txt")
 
@@ -74,11 +94,10 @@ final class MutationTestingStep: MutanusSequanceStep {
 
             let iterationDuration = iterationStartTime.distance(to: Date())
 
-            let executionResult = resultParser.recognizeResult(fileURL: logURL, paths: mutatingPaths)
-            mutationResults.append(executionResult.result)
+            let executionResult = resultParser.recognizeResult(fileURL: logURL, paths: mutatingFilePaths)
 
             for (key, value) in context.mutants where i == (value.points.count - 1) {
-                mutatingPaths.removeAll { $0 == key }
+                mutatingFilePaths.removeAll { $0 == key }
                 fileManager.restoreFileFromBackup(path: key)
             }
 
@@ -96,15 +115,7 @@ final class MutationTestingStep: MutanusSequanceStep {
             )
 
             iterationResults.append(iterationResult)
-
-            Logger.logEvent(.mutationIterationFinished(
-                duration: iterationDuration,
-                result: executionResult.result,
-                killed: executionResult.killed.count,
-                survived: executionResult.survived.count
-            ))
-
-            survivedCount += executionResult.survived.count
+            stepDelegate?.iterationFinished(duration: iterationDuration, result: executionResult)
             killedCount += executionResult.killed.count
         }
 
@@ -112,25 +123,9 @@ final class MutationTestingStep: MutanusSequanceStep {
 
         return MutationTestingResult(
             total: context.totalCount,
-            survived: survivedCount,
             killed: killedCount
         )
     }
-}
-
-struct MutationTestingIterationReport {
-
-    struct Mutation {
-        let path: String
-        let point: MutationPoint
-        let result: MutationResult
-    }
-
-    let number: Int
-    let started: Date
-    let duration: TimeInterval
-    let mutations: [Mutation]
-    let report: ExecutionReport
 }
 
 private extension MutationTestingStep {

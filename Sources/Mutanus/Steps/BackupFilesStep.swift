@@ -22,7 +22,7 @@ final class BackupFilesStep: MutanusSequanceStep {
     typealias Result = MutantsInfo
 
     var next: AnyPerformsAction<Result>?
-    var delegate: MutanusSequanceStepDelegate?
+    weak var delegate: MutanusSequanceStepDelegate?
 
     func executeStep(_ context: Context) throws -> Result {
         for path in context.mutants.keys {
