@@ -40,10 +40,21 @@ enum ExecutionResult: CaseIterable {
     }
 }
 
+struct ExecutionReport {
+    let result: ExecutionResult
+    let killed: [String]
+    let survived: [String]
+}
+
 final class MutationResultParser: ExecutionResultParser {
-    func recognizeResult(fileURL: URL, paths: [String]) -> (result: ExecutionResult, killed: Int, survived: Int) {
-        let names = paths
-            .map { String($0[$0.index($0.lastIndex(of: "/")!, offsetBy: 1)..<$0.firstIndex(of: ".")!]) + "Tests" }
+    func recognizeResult(fileURL: URL, paths: [String]) -> ExecutionReport {
+
+        var dictionary: [String: String] = [:]
+
+        paths.forEach {
+            let testFileName = String($0[$0.index($0.lastIndex(of: "/")!, offsetBy: 1)..<$0.firstIndex(of: ".")!]) + "Tests"
+            dictionary[$0] = testFileName
+        }
 
         let result = recognizeResult(in: fileURL)
 
@@ -52,19 +63,26 @@ final class MutationResultParser: ExecutionResultParser {
             let fileContent = try? String(contentsOf: fileURL),
             let index = fileContent.range(of: "Failing tests:")?.upperBound
         else {
-            return (result, 0, names.count)
+            return .init(result: result, killed: [], survived: dictionary.keys.map { $0 })
         }
 
-        let rest = String(fileContent[index...])
+        let errorsTestRange = String(fileContent[index...])
 
-        var killed: Int = 0
+        var killed: [String] = []
+        var survived: [String] = []
 
-        names.forEach {
-            if rest.range(of: $0) != nil {
-                killed += 1
+        for (key, value) in dictionary {
+            if errorsTestRange.range(of: value) != nil {
+                killed += [key]
+            } else {
+                survived += [key]
             }
         }
 
-        return (result, killed, names.count - killed)
+        return .init(
+            result: result,
+            killed: killed,
+            survived: survived
+        )
     }
 }

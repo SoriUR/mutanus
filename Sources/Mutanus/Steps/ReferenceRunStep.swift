@@ -37,5 +37,6 @@ final class ReferenceRunStep: MutanusSequanceStep {
         let executionResult = resultParser.recognizeResult(in: logFileURL)
 
         return executionResult
+//        return .testSucceeded
     }
 }

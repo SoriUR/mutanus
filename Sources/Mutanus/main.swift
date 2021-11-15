@@ -34,7 +34,9 @@ struct Entry: ParsableCommand {
                 "\(workspace).xcworkspace",
                 "-scheme", "\(scheme)",
                 "-destination",
-                "platform=iOS Simulator,name=iPhone 8"
+                "platform=iOS Simulator,name=iPhone 8",
+                "SWIFT_TREAT_WARNINGS_AS_ERRORS=NO",
+                "GCC_TREAT_WARNINGS_AS_ERRORS=NO"
             ],
             files: files
         )
@@ -44,7 +46,8 @@ struct Entry: ParsableCommand {
         try Mutanus(
             parameters: parameters,
             executor: Executor(parameters: parameters),
-            fileManager: fileManager
+            fileManager: fileManager,
+            reportCompiler: ReportCompiler(parameters: parameters)
         ).start()
     }
 }

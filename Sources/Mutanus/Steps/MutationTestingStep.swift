@@ -16,17 +16,20 @@ final class MutationTestingStep: MutanusSequanceStep {
     let executor: Executor
     let resultParser: MutationResultParser
     let fileManager: MutanusFileManger
+    let reportCompiler: ReportCompiler
 
     init(
         executor: Executor,
         resultParser: MutationResultParser,
         fileManager: MutanusFileManger,
+        reportCompiler: ReportCompiler,
         delegate: MutanusSequanceStepDelegate?
     ) {
         self.fileManager = fileManager
         self.executor = executor
         self.resultParser = resultParser
         self.delegate = delegate
+        self.reportCompiler = reportCompiler
     }
 
     // MARK: - MutanusSequanceStep
@@ -41,12 +44,13 @@ final class MutationTestingStep: MutanusSequanceStep {
 
         var mutationResults = [ExecutionResult]()
         mutationResults.reserveCapacity(context.maxFileCount)
+        var iterationResults: [MutationTestingIterationReport] = []
 
         var survivedCount = 0
         var killedCount = 0
         var mutatingPaths: [String] = context.mutants.keys.map { $0 }
 
-        for i in 0..<context.maxFileCount {
+        for i in 0..<3 {
 
             let iterationStartTime = Date()
 
@@ -54,13 +58,16 @@ final class MutationTestingStep: MutanusSequanceStep {
 
             let logURL = fileManager.createLogFile(name: "Iteration\(i+1).txt")
 
-            for mutantInfo in context.mutants.values {
-                let mutationPoints = mutantInfo.1
+            var mutations: [(path: String, point: MutationPoint)] = []
+
+            for (path, mutantInfo) in context.mutants {
+                let mutationPoints = mutantInfo.points
 
                 guard i < mutationPoints.count else { continue }
 
-                let sourceCode = mutantInfo.0
-                insertMutant(at: mutationPoints[i], within: sourceCode)
+                insertMutant(to: path, mutationPoint: mutationPoints[i], within: mutantInfo.source)
+
+                mutations.append((path, mutationPoints[i]))
             }
 
             try executor.executeProccess(logURL: logURL)
@@ -70,21 +77,38 @@ final class MutationTestingStep: MutanusSequanceStep {
             let executionResult = resultParser.recognizeResult(fileURL: logURL, paths: mutatingPaths)
             mutationResults.append(executionResult.result)
 
-            for (key, value) in context.mutants where i == (value.1.count - 1) {
+            for (key, value) in context.mutants where i == (value.points.count - 1) {
                 mutatingPaths.removeAll { $0 == key }
                 fileManager.restoreFileFromBackup(path: key)
             }
 
+            let iterationResult = MutationTestingIterationReport(
+                number: i,
+                started: iterationStartTime,
+                duration: iterationDuration,
+                mutations: mutations.map {
+                    .init(
+                        path: $0.path,
+                        point: $0.point,
+                        result: executionResult.killed.contains($0.path) ? .killed : .survived
+                    )},
+                report: executionResult
+            )
+
+            iterationResults.append(iterationResult)
+
             Logger.logEvent(.mutationIterationFinished(
                 duration: iterationDuration,
-                result: .buildFailed,
-                killed: executionResult.killed,
-                survived: executionResult.survived
+                result: executionResult.result,
+                killed: executionResult.killed.count,
+                survived: executionResult.survived.count
             ))
 
-            survivedCount += executionResult.survived
-            killedCount += executionResult.killed
+            survivedCount += executionResult.survived.count
+            killedCount += executionResult.killed.count
         }
+
+        reportCompiler.iterationsFinished(iterationResults)
 
         return MutationTestingResult(
             total: context.totalCount,
@@ -94,12 +118,26 @@ final class MutationTestingStep: MutanusSequanceStep {
     }
 }
 
+struct MutationTestingIterationReport {
+
+    struct Mutation {
+        let path: String
+        let point: MutationPoint
+        let result: MutationResult
+    }
+
+    let number: Int
+    let started: Date
+    let duration: TimeInterval
+    let mutations: [Mutation]
+    let report: ExecutionReport
+}
+
 private extension MutationTestingStep {
 
-    func insertMutant(at mutationPoint: MutationPoint, within sourceCode: SourceFileSyntax) {
-        let mutatedSource = mutationPoint.mutationOperator(sourceCode).mutatedSource
-        var path = mutationPoint.filePath
-        path.removeFirst(7)
+    func insertMutant(to path: String, mutationPoint: MutationPoint, within sourceCode: SourceFileSyntax) {
+        let mutatedSource = mutationPoint.sourceTransformation(sourceCode).mutatedSource
+
         try! mutatedSource.description.write(toFile: path, atomically: true, encoding: .utf8)
     }
 }
