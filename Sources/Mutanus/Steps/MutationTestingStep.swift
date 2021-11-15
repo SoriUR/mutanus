@@ -68,34 +68,39 @@ final class MutationTestingStep: MutanusSequanceStep {
         iterationResults.reserveCapacity(context.maxFileCount)
 
         var killedCount = 0
+
+        // Пути к файлам, в которых остались мутанты
         var mutatingFilePaths: [String] = context.mutants.keys.map { $0 }
 
-        for i in 0..<3 {
+        // Делаем столько итераций, сколько макс мутантов в 1м файле
+        for i in 0..<context.maxFileCount {
 
             let iterationStartTime = Date()
-
             stepDelegate?.iterationStated(index: i)
-
             let logURL = fileManager.createLogFile(name: "Iteration\(i+1).txt")
 
+            // Мутации в данной итерации
             var mutations: [(path: String, point: MutationPoint)] = []
 
+            // Идем по всем файлам с мутантами
             for (path, mutantInfo) in context.mutants {
                 let mutationPoints = mutantInfo.points
 
+                // проверяем что мутантов больше, чем текущая итерация
                 guard i < mutationPoints.count else { continue }
 
+                // мутируем файл
                 insertMutant(to: path, mutationPoint: mutationPoints[i], within: mutantInfo.source)
-
                 mutations.append((path, mutationPoints[i]))
             }
 
+            // запускаем сборку
             try executor.executeProccess(logURL: logURL)
 
             let iterationDuration = iterationStartTime.distance(to: Date())
-
             let executionResult = resultParser.recognizeResult(fileURL: logURL, paths: mutatingFilePaths)
 
+            // файлы в которых больше нет мутантов, откатываем до исходных
             for (key, value) in context.mutants where i == (value.points.count - 1) {
                 mutatingFilePaths.removeAll { $0 == key }
                 fileManager.restoreFileFromBackup(path: key)
@@ -115,8 +120,8 @@ final class MutationTestingStep: MutanusSequanceStep {
             )
 
             iterationResults.append(iterationResult)
-            stepDelegate?.iterationFinished(duration: iterationDuration, result: executionResult)
             killedCount += executionResult.killed.count
+            stepDelegate?.iterationFinished(duration: iterationDuration, result: executionResult)
         }
 
         reportCompiler.iterationsFinished(iterationResults)
