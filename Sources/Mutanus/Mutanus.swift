@@ -79,7 +79,7 @@ final class Mutanus {
 //                },
 //                delegate: self
 //            ))
-            .next(CalculateDutationStep<MutationTestingResult>(
+            .next(CalculateDutationStep<MutationTestingStep.Result>(
                 startTime: totalStartTime,
                 reportCompiler: reportCompiler,
                 delegate: self

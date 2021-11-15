@@ -13,20 +13,28 @@ final class ReportCompiler {
         self.report = .init(
             projectRoot: parameters.directory,
             executable: parameters.executable,
-            arguments: parameters.arguments.joined(separator: " "),
-            timing: nil,
-            score: nil,
-            files: nil,
-            iterations: nil
+            arguments: parameters.arguments.joined(separator: " ")
         )
     }
 
     func executionStarted(at date: Date) {
-        report.timing = .init(startedAt: date, duration: nil)
+        report.startedAt = date
     }
 
-    func executionDuration(_ duration: TimeInterval) {
-        report.timing?.duration = duration
+    func executionFinished(_ duration: TimeInterval) {
+        report.duration = duration
+
+        var found = 0
+        var killed = 0
+
+        report.iterations?.iterations.forEach {
+            found += $0.mutants_found
+            killed += $0.mutants_killed
+        }
+
+        report.mutants_found = found
+        report.mutants_killed = killed
+        report.mutation_score = killed / found * 100
     }
 
     func extractedSources(_ info: MutantsInfo) {
@@ -34,70 +42,85 @@ final class ReportCompiler {
             count: info.mutants.count,
             max_mutants: info.maxFileCount,
             average_mutants: info.totalCount / info.mutants.count,
-            items: info.mutants.map { mutations in
-                .init(
-                    path: mutations.key,
-                    score: nil,
-                    mutations: mutations.value.points.map {
-                        .init(
-                            file: nil,
-                            line: $0.position.line,
-                            column: $0.position.column,
-                            operator: $0.operator,
-                            result: nil
-                        )
-                    }
-                )
-            }
+            files: info.mutants.map { .init(path: $0.key) }
         )
 
         report.iterations = .init(
             count: info.maxFileCount,
             max_duration: nil,
             average_duration: nil,
-            items: []
+            iterations: []
         )
     }
 
-    func iterationStarted(number: Int, timeStarted: Date) {
-        report.iterations?.items.append(
-            .init(
-                number: number,
-                timing: .init(startedAt: timeStarted, duration: nil),
-                score: nil,
-                mutations: nil
-            )
-        )
-    }
+    func iterationsFinished(_ reports: [MutationTestingIterationReport]) {
 
-    func iterationFinished(_ result: MutationTestingIterationResult) {
-        guard
-            let index = report.iterations?.items.firstIndex(where: { $0.number == result.number }),
-            var iteration = report.iterations?.items[index]
-        else { return }
+        var maxDuration = TimeInterval(0)
 
-        iteration.timing.duration = result.duration
-        iteration.score = .init(
-            found: result.mutations.count,
-            killed: result.report.killed.count,
-            survived: result.report.survived.count,
-            score: result.report.killed.count / result.mutations.count * 100
-        )
-        iteration.mutations = result.mutations.map {
-            .init(
-                file: $0.path,
-                line: $0.point.position.line,
-                column: $0.point.position.column,
-                operator: $0.point.operator,
-                result: $0.result
-            )
+        reports.forEach {
+            iterationFinished($0)
+            maxDuration = maxDuration > $0.duration ? maxDuration : $0.duration
         }
 
-        report.iterations?.items[index] = iteration
+        report.iterations?.max_duration = maxDuration
+        report.iterations?.average_duration = maxDuration/Double(reports.count)
+
+        reports.forEach { report in
+            report.mutations.forEach { mutation in
+
+                guard
+                    let files = self.report.files?.files,
+                    let index = files.firstIndex(where: { $0.path == mutation.path})
+                else { return }
+
+                let file = files[index]
+                file.mutants_found += 1
+                file.mutants_killed += mutation.result == .killed ? 1 : 0
+                file.mutants.append(.init(
+                    file: nil,
+                    point: mutation.point,
+                    result: mutation.result
+                ))
+            }
+        }
+
+        self.report.files?.files.forEach {
+            $0.mutation_score = $0.mutants_killed / $0.mutants_found * 100
+        }
+    }
+
+    private func iterationFinished(_ result: MutationTestingIterationReport) {
+        report.iterations?.iterations.append(
+            .init(
+                number: result.number,
+                startedAt: result.started,
+                duration: result.duration,
+                mutants_found: result.mutations.count,
+                mutants_killed: result.report.killed.count,
+                mutation_score: result.report.killed.count / result.mutations.count * Float(100),
+                mutants: result.mutations.map {
+                    .init(
+                        file: $0.path,
+                        point: $0.point,
+                        result: $0.result
+                    )
+                }
+            )
+        )
     }
 
     func compile() -> Report {
         return report
+    }
+}
+
+private extension ReportMutation {
+    init(file: String?, point: MutationPoint, result: MutationResult) {
+        self.file = file
+        self.line = point.position.line
+        self.column = point.position.column
+        self.operator = point.operator
+        self.result = result
     }
 }
 

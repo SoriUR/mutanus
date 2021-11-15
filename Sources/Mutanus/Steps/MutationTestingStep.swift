@@ -44,16 +44,15 @@ final class MutationTestingStep: MutanusSequanceStep {
 
         var mutationResults = [ExecutionResult]()
         mutationResults.reserveCapacity(context.maxFileCount)
+        var iterationResults: [MutationTestingIterationReport] = []
 
         var survivedCount = 0
         var killedCount = 0
         var mutatingPaths: [String] = context.mutants.keys.map { $0 }
 
-        for i in 0..<1 {
+        for i in 0..<3 {
 
             let iterationStartTime = Date()
-
-            reportCompiler.iterationStarted(number: i, timeStarted: iterationStartTime)
 
             Logger.logEvent(.mutationIterationStarted(index: i+1))
 
@@ -78,8 +77,14 @@ final class MutationTestingStep: MutanusSequanceStep {
             let executionResult = resultParser.recognizeResult(fileURL: logURL, paths: mutatingPaths)
             mutationResults.append(executionResult.result)
 
-            reportCompiler.iterationFinished(.init(
+            for (key, value) in context.mutants where i == (value.points.count - 1) {
+                mutatingPaths.removeAll { $0 == key }
+                fileManager.restoreFileFromBackup(path: key)
+            }
+
+            let iterationResult = MutationTestingIterationReport(
                 number: i,
+                started: iterationStartTime,
                 duration: iterationDuration,
                 mutations: mutations.map {
                     .init(
@@ -88,12 +93,9 @@ final class MutationTestingStep: MutanusSequanceStep {
                         result: executionResult.killed.contains($0.path) ? .killed : .survived
                     )},
                 report: executionResult
-            ))
+            )
 
-            for (key, value) in context.mutants where i == (value.points.count - 1) {
-                mutatingPaths.removeAll { $0 == key }
-                fileManager.restoreFileFromBackup(path: key)
-            }
+            iterationResults.append(iterationResult)
 
             Logger.logEvent(.mutationIterationFinished(
                 duration: iterationDuration,
@@ -106,6 +108,8 @@ final class MutationTestingStep: MutanusSequanceStep {
             killedCount += executionResult.killed.count
         }
 
+        reportCompiler.iterationsFinished(iterationResults)
+
         return MutationTestingResult(
             total: context.totalCount,
             survived: survivedCount,
@@ -114,12 +118,7 @@ final class MutationTestingStep: MutanusSequanceStep {
     }
 }
 
-struct MutationTestingIterationResult1 {
-    let number: Int
-    let started: Date
-}
-
-struct MutationTestingIterationResult {
+struct MutationTestingIterationReport {
 
     struct Mutation {
         let path: String
@@ -128,6 +127,7 @@ struct MutationTestingIterationResult {
     }
 
     let number: Int
+    let started: Date
     let duration: TimeInterval
     let mutations: [Mutation]
     let report: ExecutionReport

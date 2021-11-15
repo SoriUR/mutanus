@@ -10,9 +10,13 @@ struct Report: Encodable {
     let executable: String
     let arguments: String
 
-    var timing: ReportTiming?
-    var score: ReportScore?
+    var startedAt: Date? = nil
+    var duration: TimeInterval = 0
 
-    var files: FilesReport?
-    var iterations: IterationsReport?
+    var mutants_found: Int = 0
+    var mutants_killed: Int = 0
+    var mutation_score: Float = 0
+
+    var files: FilesReport? = nil
+    var iterations: IterationsReport? = nil
 }

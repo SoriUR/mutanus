@@ -10,8 +10,7 @@ struct ReportMutation: Encodable {
     let line: Int
     let column: Int
     let `operator`: MutationOperator
-
-    var result: MutationResult?
+    let result: MutationResult
 }
 
 enum MutationResult: String, Encodable {

@@ -54,8 +54,6 @@ final class CalculateDutationStep<C>: MutanusSequanceStep {
     var next: AnyPerformsAction<Result>?
 
     func executeStep(_ context: Context) throws -> Result {
-        let duration = startTime.distance(to: Date())
-        reportCompiler.executionDuration(duration)
-        
+        reportCompiler.executionFinished(startTime.distance(to: Date()))
     }
 }

@@ -8,14 +8,20 @@ struct IterationsReport: Encodable {
 
     struct Iteration: Encodable {
         let number: Int
-        var timing: ReportTiming
-        var score: ReportScore?
-        var mutations: [ReportMutation]?
+
+        let startedAt: Date
+        let duration: TimeInterval
+
+        let mutants_found: Int
+        let mutants_killed: Int
+        let mutation_score: Float
+
+        let mutants: [ReportMutation]
     }
 
     let count: Int
     var max_duration: TimeInterval?
     var average_duration: TimeInterval?
 
-    var items: [Iteration]
+    var iterations: [Iteration]
 }
