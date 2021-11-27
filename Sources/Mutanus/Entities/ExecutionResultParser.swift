@@ -42,8 +42,8 @@ enum ExecutionResult: CaseIterable {
 
 struct ExecutionReport {
     let result: ExecutionResult
+    let total: Int
     let killed: [String]
-    let survived: [String]
 }
 
 final class MutationResultParser: ExecutionResultParser {
@@ -63,26 +63,21 @@ final class MutationResultParser: ExecutionResultParser {
             let fileContent = try? String(contentsOf: fileURL),
             let index = fileContent.range(of: "Failing tests:")?.upperBound
         else {
-            return .init(result: result, killed: [], survived: dictionary.keys.map { $0 })
+            return .init(result: result, total: paths.count, killed: [])
         }
 
         let errorsTestRange = String(fileContent[index...])
 
-        var killed: [String] = []
-        var survived: [String] = []
-
-        for (key, value) in dictionary {
-            if errorsTestRange.range(of: value) != nil {
-                killed += [key]
-            } else {
-                survived += [key]
+        let killed = dictionary.reduce(into: [String]()) { result, current in
+            if errorsTestRange.range(of: current.value) != nil {
+                result += [current.key]
             }
         }
 
         return .init(
             result: result,
-            killed: killed,
-            survived: survived
+            total: paths.count,
+            killed: killed
         )
     }
 }

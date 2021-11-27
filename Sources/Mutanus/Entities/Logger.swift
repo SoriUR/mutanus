@@ -19,15 +19,10 @@ enum LoggerEvent {
     case filesBackupStared
 
     case mutationTestingStarted
-    case mutationTestingFinished(total: Int, killed: Int, survived: Int)
+    case mutationTestingFinished(total: Int, killed: Int)
 
     case mutationIterationStarted(index: Int)
-    case mutationIterationFinished(
-            duration: TimeInterval,
-            result: ExecutionResult,
-            killed: Int,
-            survived: Int
-         )
+    case mutationIterationFinished(duration: TimeInterval, result: ExecutionReport)
 }
 
 enum Logger  {
@@ -61,14 +56,14 @@ enum Logger  {
         case .mutationTestingStarted:
             printOutput(title: "Executing mutation testing")
 
-        case let .mutationTestingFinished(total, killed, survived):
-            logMutationTestingFinished(total, killed, survived)
+        case let .mutationTestingFinished(total, killed):
+            logMutationTestingFinished(total, killed)
 
         case let .mutationIterationStarted(index):
             printOutput(title: "Mutation iterations Number: \(index)")
 
-        case let .mutationIterationFinished(duration, result, killed, survived):
-            logMutationIterationFinished(duration, result, killed, survived)
+        case let .mutationIterationFinished(duration, result):
+            logMutationIterationFinished(duration, result)
         }
     }
 
@@ -127,11 +122,11 @@ private extension Logger {
         printOutput(title: nil, content: content)
     }
 
-    static func logMutationIterationFinished(_ duration: TimeInterval, _ result: ExecutionResult, _ killed: Int, _ survived: Int) {
+    static func logMutationIterationFinished(_ duration: TimeInterval, _ result: ExecutionReport) {
         let content = """
-            Result: \(result.pretty)
-            Killed: \(killed)
-            Survived: \(survived)
+            Result: \(result.result.pretty)
+            Found: \(result.total)
+            Killed: \(result.killed.count)
             Duration: \(duration.rounded()) sec
 
         """
@@ -140,14 +135,12 @@ private extension Logger {
 
     static func logMutationTestingFinished(
         _ total: Int,
-        _ killed: Int,
-        _ survived: Int
+        _ killed: Int
     ) {
         let score = Float(killed)/Float(total) * 100
         let content = """
             Mutants Count: \(total)
             Mutants Killed: \(killed)
-            Mutants Survived: \(survived)
             \(String(format: "Mutation Score: %.2f", score))%
         """
 

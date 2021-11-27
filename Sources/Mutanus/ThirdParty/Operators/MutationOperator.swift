@@ -1,17 +1,10 @@
 import SwiftSyntax
 import Foundation
 
-typealias SourceCodeTransformation = (SourceFileSyntax) -> (mutatedSource: SyntaxProtocol, mutationSnapshot: MutationOperatorSnapshot)
-typealias RewriterInitializer = (MutationPosition) -> PositionSpecificRewriter
-typealias VisitorInitializer = (SourceFileInfo) -> PositionDiscoveringVisitor
 
 public struct MutationPoint: Equatable, Codable {
     let `operator`: MutationOperator
     let position: MutationPosition
-    
-    var sourceTransformation: SourceCodeTransformation {
-        return self.operator.mutationOperator(for: position)
-    }
 }
 
 extension MutationPoint: Nullable {
@@ -51,18 +44,6 @@ enum MutationOperator: String, Codable, CaseIterable {
 
         case .logicalConnector:
             return ChangeLogicalConnectorOperator.Rewriter(positionToMutate: position)
-        }
-    }
-
-    func mutationOperator(for position: MutationPosition) -> SourceCodeTransformation {
-        return { source in
-            let rewriter = self.rewriter(position)
-            let mutatedSource = rewriter.visit(source)
-            let operatorSnapshot = rewriter.operatorSnapshot
-            return (
-                mutatedSource: mutatedSource,
-                mutationSnapshot: operatorSnapshot
-            )
         }
     }
 }
