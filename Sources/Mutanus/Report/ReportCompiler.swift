@@ -8,12 +8,12 @@ final class ReportCompiler {
 
     private var report: Report
 
-    init(parameters: MutationParameters) {
+    init(configuration: MutanusConfiguration) {
 
         self.report = .init(
-            projectRoot: parameters.directory,
-            executable: parameters.executable,
-            arguments: parameters.arguments.joined(separator: " ")
+            projectRoot: configuration.projectPath,
+            executable: configuration.executable,
+            arguments: configuration.arguments.joined(separator: " ")
         )
     }
 

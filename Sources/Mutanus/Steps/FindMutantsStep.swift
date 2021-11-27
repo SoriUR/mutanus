@@ -38,11 +38,6 @@ final class FindMutantsStep: MutanusSequanceStep {
 
             let mutationPoints = findMutationPoints(in: source).sorted(by: filePositionOrder)
 
-//            mutationPoints.forEach {
-//                let snapshot = $0.mutationOperator(source.code).mutationSnapshot
-//                print("\($0.position.line):\($0.position.column) \(snapshot.description)")
-//            }
-
             result[path] = (source.code, mutationPoints)
         }
 

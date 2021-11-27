@@ -11,6 +11,8 @@ protocol MutanusFileManger {
 
     @discardableResult
     func changeCurrentDirectoryPath(_ path: String) -> Bool
+    func contents(atPath path: String) -> Data?
+    func subpaths(atPath path: String) -> [String]?
 
     func createMutanusDirectories()
     func createLogFile(name: String) -> URL

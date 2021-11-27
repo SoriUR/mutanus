@@ -5,7 +5,7 @@
 import Foundation
 
 enum LoggerEvent {
-    case receivedParameters(MutationParameters)
+    case receivedConfiguration(MutanusConfiguration)
 
     case referenceRunStarted
     case referenceRunFinished(result: ExecutionResult)
@@ -27,9 +27,11 @@ enum LoggerEvent {
 
 enum Logger  {
 
+    static var isEnabled = true
+
     static func logEvent(_ event: LoggerEvent) {
         switch event {
-        case let .receivedParameters(parameters):
+        case let .receivedConfiguration(parameters):
             logReceivedParameters(parameters)
 
         case .referenceRunStarted:
@@ -81,9 +83,9 @@ enum Logger  {
 // MARK: - Private
 private extension Logger {
 
-    static func logReceivedParameters(_ parameters: MutationParameters) {
+    static func logReceivedParameters(_ parameters: MutanusConfiguration) {
         let content = """
-            directory: \(parameters.directory)
+            directory: \(parameters.projectPath)
             executable: \(parameters.executable)
             arguments: \(parameters.arguments.joined(separator: " "))
         """
@@ -148,6 +150,8 @@ private extension Logger {
     }
 
     static func printOutput(title: String?, content: String? = nil) {
+
+        guard isEnabled else { return }
 
         if let title = title {
             print("""
