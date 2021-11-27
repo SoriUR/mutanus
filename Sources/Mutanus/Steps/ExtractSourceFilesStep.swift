@@ -46,6 +46,8 @@ final class ExtractSourceFilesStep: MutanusSequanceStep {
                 .filter { $0.hasSuffix(".swift") }
                 .filter { !$0.contains("Tests") }
                 .filter { !$0.contains("Seeds") }
+                .filter { !$0.contains("Snapshots") }
+                .filter { !$0.contains("View.swift") }
 
             sourceFiles.append(contentsOf: filteredPaths)
         }

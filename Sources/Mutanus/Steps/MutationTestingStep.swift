@@ -136,7 +136,9 @@ final class MutationTestingStep: MutanusSequanceStep {
 private extension MutationTestingStep {
 
     func insertMutant(to path: String, mutationPoint: MutationPoint, within sourceCode: SourceFileSyntax) {
-        let mutatedSource = mutationPoint.sourceTransformation(sourceCode).mutatedSource
+
+        let rewriter = mutationPoint.operator.rewriter(mutationPoint.position)
+        let mutatedSource = rewriter.visit(sourceCode)
 
         try! mutatedSource.description.write(toFile: path, atomically: true, encoding: .utf8)
     }

@@ -56,14 +56,16 @@ final class ReportCompiler {
     func iterationsFinished(_ reports: [MutationTestingIterationReport]) {
 
         var maxDuration = TimeInterval(0)
+        var totalDuration =  TimeInterval(0)
 
         reports.forEach {
             iterationFinished($0)
+            totalDuration += $0.duration
             maxDuration = maxDuration > $0.duration ? maxDuration : $0.duration
         }
 
         report.iterations?.max_duration = maxDuration
-        report.iterations?.average_duration = maxDuration/Double(reports.count)
+        report.iterations?.average_duration = totalDuration/Double(reports.count)
 
         reports.forEach { report in
             report.mutations.forEach { mutation in
