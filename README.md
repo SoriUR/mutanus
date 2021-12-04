@@ -1,3 +1,2 @@
-# Mutanus
-
-A description of this package.
+# mutanus
+Performs mutation testing of your Swift project
