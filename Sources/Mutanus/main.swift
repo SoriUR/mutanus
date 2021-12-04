@@ -5,49 +5,52 @@ struct Entry: ParsableCommand {
 
     private var fileManager: MutanusFileManger { FileManager.default }
 
-    @Option(name: .shortAndLong, help: "Path to project root")
-    var directory: String?
+    @Option(name: .shortAndLong, help: "Path to the configuration file")
+    var configurationPath: String?
 
     @Option(name: .shortAndLong, help: "Path to the executable")
-    var executable: String = "/usr/bin/xcodebuild"
+    var executable: String?
 
-    @Option(name: .shortAndLong, help: "Name of the workspace")
-    var workspace: String
+    @Option(name: .shortAndLong, parsing: .upToNextOption, help: "Arguments for executable", completion: nil)
+    var arguments: [String] = []
 
-    @Option(name: .shortAndLong, help: "Name of the scheme")
-    var scheme: String
+    @Option(name: .shortAndLong, help: "Path to the project root")
+    var projectPath: String?
 
     @Option(name: .shortAndLong, parsing: .upToNextOption, help: "Files to find mutants in", completion: nil)
-    var files: [String] = []
+    var sourcePaths: [String] = []
+
+    @Flag(name: .shortAndLong, help: "Verbose")
+    var verbose: Bool = false
 
     func run() throws {
-        let resultDirectory = directory ?? FileManager.default.currentDirectoryPath
 
-        let onlyTesting = files.map { "-only-testing:\(scheme)-Unit-Tests/\($0)" }
+        let configuration: MutanusConfiguration
 
-        let parameters = MutationParameters(
-            directory: resultDirectory,
-            executable: executable,
-            arguments: [
-                "test",
-                "-workspace",
-                "\(workspace).xcworkspace",
-                "-scheme", "\(scheme)",
-                "-destination",
-                "platform=iOS Simulator,name=iPhone 8",
-                "SWIFT_TREAT_WARNINGS_AS_ERRORS=NO",
-                "GCC_TREAT_WARNINGS_AS_ERRORS=NO"
-            ],
-            files: files
-        )
+        if
+            let configurationPath = configurationPath,
+            let data = fileManager.contents(atPath: configurationPath)
+        {
+            configuration = try JSONDecoder().decode(MutanusConfiguration.self, from: data)
+        } else if let executable = executable {
+            configuration = MutanusConfiguration(
+                executable: executable,
+                arguments: arguments,
+                projectPath: projectPath ?? fileManager.currentDirectoryPath,
+                sourcePaths: sourcePaths
+            )
+        } else {
+            fatalError("Neither configuration or executable has beed found")
+        }
 
-        Logger.logEvent(.receivedParameters(parameters))
+        Logger.isEnabled = verbose
+        Logger.logEvent(.receivedConfiguration(configuration))
 
         try Mutanus(
-            parameters: parameters,
-            executor: Executor(parameters: parameters),
+            configuration: configuration,
+            executor: Executor(configuration: configuration),
             fileManager: fileManager,
-            reportCompiler: ReportCompiler(parameters: parameters)
+            reportCompiler: ReportCompiler(configuration: configuration)
         ).start()
     }
 }
@@ -55,7 +58,17 @@ struct Entry: ParsableCommand {
 // MARK: - Validation
 extension Entry {
     func validate() throws {
-        try validateDirectory(directory)
+        if let configurationPath = configurationPath {
+
+            let (exists, isDirectory) = fileManager.fileExists(atPath: configurationPath)
+
+            guard exists, !isDirectory else {
+                throw ValidationError("Configuration file at given path doesn't exits")
+            }
+            return
+        }
+
+        try validateDirectory(projectPath)
         try validateExecutable(executable)
     }
 
@@ -64,8 +77,8 @@ extension Entry {
     private func validateDirectory(_ path: String?) throws {
         guard let path = path else { return }
 
-        let (exists, isDirectory) = FileManager.default.fileExists(atPath: path)
-        guard exists  else {
+        let (exists, isDirectory) = fileManager.fileExists(atPath: path)
+        guard exists else {
             throw ValidationError("Path doesn't exist")
         }
 
@@ -74,8 +87,12 @@ extension Entry {
         }
     }
 
-    private func validateExecutable(_ path: String) throws {
-        guard FileManager.default.isExecutableFile(atPath: path) else {
+    private func validateExecutable(_ path: String?) throws {
+        guard let executablePath = executable else {
+            throw ValidationError("Executable has't been specified")
+        }
+
+        guard FileManager.default.isExecutableFile(atPath: executablePath) else {
             throw ValidationError("Executable doesn't exist")
         }
     }

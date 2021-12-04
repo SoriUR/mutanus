@@ -4,16 +4,25 @@
 
 import Foundation
 
-struct MutationParameters {
-    let directory: String
+
+struct MutanusConfiguration: Codable {
     let executable: String
     let arguments: [String]
-    let files: [String]
+    let projectPath: String
+    let sourcePaths: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case executable
+        case arguments
+        case projectPath = "project_path"
+        case sourcePaths = "source_paths"
+    }
 }
+
 
 final class Mutanus {
 
-    let parameters: MutationParameters
+    let configuration: MutanusConfiguration
     let executor: Executor
     let fileManager: MutanusFileManger
     let reportCompiler: ReportCompiler
@@ -22,19 +31,19 @@ final class Mutanus {
     private var totalStartTime: Date!
 
     init(
-        parameters: MutationParameters,
+        configuration: MutanusConfiguration,
         executor: Executor,
         fileManager: MutanusFileManger,
         reportCompiler: ReportCompiler
     ) {
-        self.parameters = parameters
+        self.configuration = configuration
         self.executor = executor
         self.fileManager = fileManager
         self.reportCompiler = reportCompiler
     }
 
     func start() throws {
-        fileManager.changeCurrentDirectoryPath(parameters.directory)
+        fileManager.changeCurrentDirectoryPath(configuration.projectPath)
         fileManager.createMutanusDirectories()
 
         let sequence = StepsSequence()
@@ -51,7 +60,7 @@ final class Mutanus {
             ))
             .next(ExtractSourceFilesStep(
                 fileManager: fileManager,
-                parameters: parameters,
+                configuration: configuration,
                 delegate: self
             ))
             .next(FindMutantsStep(

@@ -6,18 +6,18 @@ import Foundation
 
 struct Executor {
 
-    let parameters: MutationParameters
+    let configuration: MutanusConfiguration
 
-    init(parameters: MutationParameters) {
-        self.parameters = parameters
+    init(configuration: MutanusConfiguration) {
+        self.configuration = configuration
     }
 
     func executeProccess(logURL: URL) throws {
         let logHandle = try FileHandle(forWritingTo: logURL)
 
         let process = Process()
-        process.arguments = parameters.arguments
-        process.executableURL = URL(fileURLWithPath: parameters.executable)
+        process.arguments = configuration.arguments
+        process.executableURL = URL(fileURLWithPath: configuration.executable)
         process.standardOutput = logHandle
         process.standardError = logHandle
 
