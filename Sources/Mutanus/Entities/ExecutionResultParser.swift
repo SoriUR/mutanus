@@ -9,19 +9,22 @@ class ExecutionResultParser {
         let fileContent = try! String(contentsOf: url)
         
         for item in ExecutionResult.allCases {
-            if fileContent.contains(getAttribute(for: item)) {
-                return item
+            for attribute in getAttributes(for: item) {
+                if fileContent.contains(attribute) {
+                    return item
+                }
             }
         }
         
-        return .testSucceeded
+        return .unknown
     }
     
-    private func getAttribute(for result: ExecutionResult) -> String {
+    private func getAttributes(for result: ExecutionResult) -> [String] {
         switch result {
-        case .buildFailed: return "Testing cancelled because the build failed"
-        case .testFailed: return "** TEST FAILED **"
-        case .testSucceeded: return "** TEST SUCCEEDED **"
+        case .buildFailed: return ["Testing cancelled because the build failed", "xcodebuild: error:"]
+        case .testFailed: return ["** TEST FAILED **"]
+        case .testSucceeded: return ["** TEST SUCCEEDED **"]
+        case .unknown: return []
         }
     }
 }
@@ -30,12 +33,14 @@ enum ExecutionResult: CaseIterable {
     case buildFailed
     case testSucceeded
     case testFailed
+    case unknown
     
     var pretty: String {
         switch self {
         case .buildFailed: return "Build Failed"
         case .testSucceeded: return "Test Succeeded"
         case .testFailed: return "Test Failed"
+        case .unknown: return "Unknown"
         }
     }
 }

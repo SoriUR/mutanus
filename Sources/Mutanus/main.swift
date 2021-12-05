@@ -3,7 +3,7 @@ import ArgumentParser
 
 struct Entry: ParsableCommand {
 
-    private var fileManager: MutanusFileManger { FileManager.default }
+    private var fileManager: MutanusFileManger { CustomFileManager() }
 
     @Option(name: .shortAndLong, help: "Path to the configuration file")
     var configurationPath: String?
@@ -19,9 +19,6 @@ struct Entry: ParsableCommand {
 
     @Option(name: .shortAndLong, parsing: .upToNextOption, help: "Files to find mutants in", completion: nil)
     var sourcePaths: [String] = []
-
-    @Flag(name: .shortAndLong, help: "Verbose")
-    var verbose: Bool = false
 
     func run() throws {
 
@@ -43,7 +40,6 @@ struct Entry: ParsableCommand {
             fatalError("Neither configuration or executable has beed found")
         }
 
-        Logger.isEnabled = verbose
         Logger.logEvent(.receivedConfiguration(configuration))
 
         try Mutanus(

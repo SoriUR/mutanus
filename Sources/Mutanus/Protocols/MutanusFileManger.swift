@@ -22,8 +22,7 @@ protocol MutanusFileManger {
     func createReportFile(contents: Data)
 }
 
-extension FileManager: MutanusFileManger {
-
+final class CustomFileManager: FileManager, MutanusFileManger {
     func createMutanusDirectories() {
         createDirectory(atPath: logsDirectoryPath)
         createDirectory(atPath: backupsDirectoryPath)
@@ -54,28 +53,33 @@ extension FileManager: MutanusFileManger {
     }
 
     func createReportFile(contents: Data) {
-        createFile(atPath: currentDirectoryPath+"/MutanusReport.json", contents: contents)
+        createFile(atPath: mutanusDirectoryPath + "Report.json", contents: contents)
     }
 
     // MARK: - Private
 
     private var logsDirectoryPath: String {
-        currentDirectoryPath + "/MutanusLogs/"
+        mutanusDirectoryPath + "Logs/"
     }
 
     private var backupsDirectoryPath: String {
-        currentDirectoryPath + "/MutanusBackups/"
+        mutanusDirectoryPath + "Backups/"
     }
+
+    private lazy var mutanusDirectoryPath: String = {
+        currentDirectoryPath + "/Mutanus/\(Date())/"
+    }()
 
     private func createDirectory(atPath path: String) {
         let (exists, isDirectory) = fileExists(atPath: path)
         if exists && isDirectory {
             try! removeItem(atPath: path)
         }
-        try! createDirectory(atPath: path, withIntermediateDirectories: false)
+        try! createDirectory(atPath: path, withIntermediateDirectories: true)
     }
 
     private func backupFilePath(path: String) -> String {
         backupsDirectoryPath + URL(fileURLWithPath: path).lastPathComponent
     }
 }
+
