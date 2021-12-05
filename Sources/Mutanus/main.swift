@@ -3,7 +3,7 @@ import ArgumentParser
 
 struct Entry: ParsableCommand {
 
-    private var fileManager: MutanusFileManger { FileManager.default }
+    private var fileManager: MutanusFileManger { CustomFileManager() }
 
     @Option(name: .shortAndLong, help: "Path to the configuration file")
     var configurationPath: String?

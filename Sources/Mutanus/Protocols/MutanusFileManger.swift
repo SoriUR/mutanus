@@ -22,8 +22,7 @@ protocol MutanusFileManger {
     func createReportFile(contents: Data)
 }
 
-extension FileManager: MutanusFileManger {
-
+final class CustomFileManager: FileManager, MutanusFileManger {
     func createMutanusDirectories() {
         createDirectory(atPath: logsDirectoryPath)
         createDirectory(atPath: backupsDirectoryPath)
@@ -67,9 +66,9 @@ extension FileManager: MutanusFileManger {
         mutanusDirectoryPath + "Backups/"
     }
 
-    private var mutanusDirectoryPath: String {
+    private lazy var mutanusDirectoryPath: String = {
         currentDirectoryPath + "/Mutanus/\(Date())/"
-    }
+    }()
 
     private func createDirectory(atPath path: String) {
         let (exists, isDirectory) = fileExists(atPath: path)
@@ -83,3 +82,4 @@ extension FileManager: MutanusFileManger {
         backupsDirectoryPath + URL(fileURLWithPath: path).lastPathComponent
     }
 }
+
