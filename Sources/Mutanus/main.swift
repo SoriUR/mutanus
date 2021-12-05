@@ -20,9 +20,6 @@ struct Entry: ParsableCommand {
     @Option(name: .shortAndLong, parsing: .upToNextOption, help: "Files to find mutants in", completion: nil)
     var sourcePaths: [String] = []
 
-    @Flag(name: .shortAndLong, help: "Verbose")
-    var verbose: Bool = false
-
     func run() throws {
 
         let configuration: MutanusConfiguration
@@ -43,7 +40,6 @@ struct Entry: ParsableCommand {
             fatalError("Neither configuration or executable has beed found")
         }
 
-        Logger.isEnabled = verbose
         Logger.logEvent(.receivedConfiguration(configuration))
 
         try Mutanus(

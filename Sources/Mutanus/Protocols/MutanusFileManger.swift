@@ -54,17 +54,21 @@ extension FileManager: MutanusFileManger {
     }
 
     func createReportFile(contents: Data) {
-        createFile(atPath: currentDirectoryPath+"/MutanusReport.json", contents: contents)
+        createFile(atPath: mutanusDirectory + "Report.json", contents: contents)
     }
 
     // MARK: - Private
 
     private var logsDirectoryPath: String {
-        currentDirectoryPath + "/MutanusLogs/"
+        mutanusDirectory + "Logs/"
     }
 
     private var backupsDirectoryPath: String {
-        currentDirectoryPath + "/MutanusBackups/"
+        mutanusDirectory + "Backups/"
+    }
+
+    private var mutanusDirectory: String {
+        currentDirectoryPath + "/Mutanus/\(Date())/"
     }
 
     private func createDirectory(atPath path: String) {

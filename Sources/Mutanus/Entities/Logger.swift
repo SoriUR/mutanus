@@ -27,8 +27,6 @@ enum LoggerEvent {
 
 enum Logger  {
 
-    static var isEnabled = true
-
     static func logEvent(_ event: LoggerEvent) {
         switch event {
         case let .receivedConfiguration(parameters):
@@ -150,8 +148,6 @@ private extension Logger {
     }
 
     static func printOutput(title: String?, content: String? = nil) {
-
-        guard isEnabled else { return }
 
         if let title = title {
             print("""
