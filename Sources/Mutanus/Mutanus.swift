@@ -28,7 +28,7 @@ final class Mutanus {
 
     func start() throws {
         
-        fileManager.changeCurrentDirectoryPath(configuration.projectPath)
+        fileManager.changeCurrentDirectoryPath(configuration.projectRoot)
         fileManager.createMutanusDirectories()
 
         let sequence = StepsSequence()

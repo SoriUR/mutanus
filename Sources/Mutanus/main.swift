@@ -12,14 +12,15 @@ final class Entry: ParsableCommand {
     func run() throws {
 
         guard let configuration = configuration else {
-            fatalError("Neither configuration or executable has beed found")
+            fatalError("Configuration hasn't been found")
         }
 
         let mutanusConfiguration = MutanusConfiguration(
             executable: configuration.executable,
             arguments: configuration.arguments,
-            projectPath: configuration.projectPath ?? fileManager.currentDirectoryPath,
-            sourcePaths: configuration.sourcePaths ?? ["/"]
+            projectRoot: configuration.projectRoot ?? fileManager.currentDirectoryPath,
+            sourceFiles: configuration.sourceFiles ?? ["/"],
+            excludedFiles: configuration.excludedFiles ?? []
         )
 
         Logger.logEvent(.receivedConfiguration(mutanusConfiguration))
@@ -50,7 +51,7 @@ extension Entry {
             if exists, !isDirectory {
                 anyConfigurationPath = relativeConfigurationPath
             } else {
-                throw ValidationError("Configuration file at given path doesn't exits")
+                throw ValidationError("Configuration file doesn't exits at given path")
             }
         }
 
@@ -63,7 +64,7 @@ extension Entry {
         let configuration = try JSONDecoder().decode(InputConfiguration.self, from: data)
 
         try validateExecutable(configuration.executable)
-        try validateDirectory(configuration.projectPath)
+        try validateDirectory(configuration.projectRoot)
 
         self.configuration = configuration
     }
@@ -82,11 +83,11 @@ extension Entry {
 
         let (exists, isDirectory) = fileManager.fileExists(atPath: path)
         guard exists else {
-            throw ValidationError("Path doesn't exist")
+            throw ValidationError("Project root path doesn't exist")
         }
 
         guard isDirectory else {
-            throw ValidationError("Path is not a folder")
+            throw ValidationError("Project root path is not a folder")
         }
     }
 }

@@ -300,7 +300,6 @@
 		OBJ_16 /* MutanusFileManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutanusFileManger.swift; sourceTree = "<group>"; };
 		OBJ_167 /* Build */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Build; sourceTree = SOURCE_ROOT; };
 		OBJ_168 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		OBJ_169 /* Mutanus.conf */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mutanus.conf; sourceTree = "<group>"; };
 		OBJ_170 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		OBJ_19 /* FilesReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesReport.swift; sourceTree = "<group>"; };
 		OBJ_20 /* IterationsReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IterationsReport.swift; sourceTree = "<group>"; };
@@ -702,7 +701,6 @@
 				OBJ_160 /* Products */,
 				OBJ_167 /* Build */,
 				OBJ_168 /* LICENSE */,
-				OBJ_169 /* Mutanus.conf */,
 				OBJ_170 /* README.md */,
 			);
 			sourceTree = "<group>";

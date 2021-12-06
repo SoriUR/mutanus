@@ -30,8 +30,8 @@ final class ExtractSourceFilesStep: MutanusSequanceStep {
     func executeStep(_ context: Context) throws -> Result {
         var sourceFiles = [String]()
 
-        configuration.sourcePaths.forEach {
-            let path = configuration.projectPath + $0
+        configuration.sourceFiles.forEach {
+            let path = configuration.projectRoot + $0
             let (exists, isDirectory) = fileManager.fileExists(atPath: path)
 
             guard exists else { return }
@@ -42,10 +42,11 @@ final class ExtractSourceFilesStep: MutanusSequanceStep {
 
             let filteredPaths = paths
                 .filter { $0.hasSuffix(".swift") }
-                .filter { !$0.contains("Tests") }
-                .filter { !$0.contains("Seeds") }
-                .filter { !$0.contains("Snapshots") }
-                .filter { !$0.contains("View.swift") }
+                .filter { path in
+                    configuration.excludedFiles.reduce(true) { result, current in
+                        return result && path.range(of: current, options: .regularExpression) == nil
+                    }
+                }
 
             sourceFiles.append(contentsOf: filteredPaths)
         }
