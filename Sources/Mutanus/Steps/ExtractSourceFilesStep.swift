@@ -30,9 +30,7 @@ final class ExtractSourceFilesStep: MutanusSequanceStep {
     func executeStep(_ context: Context) throws -> Result {
         var sourceFiles = [String]()
 
-        let sources = configuration.sourcePaths.isEmpty ? ["/"] : configuration.sourcePaths
-
-        sources.forEach {
+        configuration.sourcePaths.forEach {
             let path = configuration.projectPath + $0
             let (exists, isDirectory) = fileManager.fileExists(atPath: path)
 
