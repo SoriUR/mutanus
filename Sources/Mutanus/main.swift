@@ -12,7 +12,7 @@ final class Entry: ParsableCommand {
     func run() throws {
 
         guard let configuration = configuration else {
-            fatalError("Neither configuration or executable has beed found")
+            fatalError("Configuration hasn't been found")
         }
 
         let mutanusConfiguration = MutanusConfiguration(
@@ -51,7 +51,7 @@ extension Entry {
             if exists, !isDirectory {
                 anyConfigurationPath = relativeConfigurationPath
             } else {
-                throw ValidationError("Configuration file at given path doesn't exits")
+                throw ValidationError("Configuration file doesn't exits at given path")
             }
         }
 
@@ -83,11 +83,11 @@ extension Entry {
 
         let (exists, isDirectory) = fileManager.fileExists(atPath: path)
         guard exists else {
-            throw ValidationError("Path doesn't exist")
+            throw ValidationError("Project root path doesn't exist")
         }
 
         guard isDirectory else {
-            throw ValidationError("Path is not a folder")
+            throw ValidationError("Project root path is not a folder")
         }
     }
 }
