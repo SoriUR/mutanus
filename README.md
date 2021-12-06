@@ -16,8 +16,8 @@ Inspired by [Muter](https://github.com/muter-mutation-testing/muter)
  
 - Required parameters
 
-  - **project_path** - path to the root of your project. Current directory is used if not present
-  - **source_paths** - array of relative to **project_path** paths  of files or/and folders. Listed sources are used for mutants search. All files in **project_path** are used if not present
+  - **project_root** - path to the root of your project. Current directory is used if not present
+  - **source_files** - array of relative to **project_root** paths  of files or/and folders. Listed sources are used for mutants search. All files in **project_root** are used if not present
 
 ```json
 { 
@@ -33,10 +33,15 @@ Inspired by [Muter](https://github.com/muter-mutation-testing/muter)
     "SWIFT_TREAT_WARNINGS_AS_ERRORS=NO",
     "GCC_TREAT_WARNINGS_AS_ERRORS=NO"
   ],
-  "project_path": "<path-to-project>",
-  "source_paths": [ 
-    "<path-to-first-souce-file>",
-    "<path-to-second-souce-file>"
+  "project_root": "<path-to-project>",
+  "source_files": [ 
+    "<path-to-first-file>",
+    "<path-to-second-file>",
+    "<path-to-folder>",
+  ],
+  "excluded_files": [
+    "<first-exclude-rule>",
+    "<second-exclude-rule>",
   ]
 }
 ```
