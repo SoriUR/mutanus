@@ -11,7 +11,7 @@ final class ReportCompiler {
     init(configuration: MutanusConfiguration) {
 
         self.report = .init(
-            projectRoot: configuration.projectPath,
+            projectRoot: configuration.projectRoot,
             executable: configuration.executable,
             arguments: configuration.arguments.joined(separator: " ")
         )

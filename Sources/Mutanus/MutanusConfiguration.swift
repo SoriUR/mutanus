@@ -7,20 +7,23 @@ import Foundation
 struct InputConfiguration: Decodable {
     let executable: String
     let arguments: [String]
-    let projectPath: String?
-    let sourcePaths: [String]?
+    let projectRoot: String?
+    let sourceFiles: [String]?
+    let excludedFiles: [String]?
 
     enum CodingKeys: String, CodingKey {
         case executable
         case arguments
-        case projectPath = "project_path"
-        case sourcePaths = "source_paths"
+        case projectRoot = "project_root"
+        case sourceFiles = "source_files"
+        case excludedFiles = "excluded_files"
     }
 }
 
 struct MutanusConfiguration {
     let executable: String
     let arguments: [String]
-    let projectPath: String
-    let sourcePaths: [String]
+    let projectRoot: String
+    let sourceFiles: [String]
+    let excludedFiles: [String]
 }

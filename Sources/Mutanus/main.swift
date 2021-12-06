@@ -18,8 +18,9 @@ final class Entry: ParsableCommand {
         let mutanusConfiguration = MutanusConfiguration(
             executable: configuration.executable,
             arguments: configuration.arguments,
-            projectPath: configuration.projectPath ?? fileManager.currentDirectoryPath,
-            sourcePaths: configuration.sourcePaths ?? ["/"]
+            projectRoot: configuration.projectRoot ?? fileManager.currentDirectoryPath,
+            sourceFiles: configuration.sourceFiles ?? ["/"],
+            excludedFiles: configuration.excludedFiles ?? []
         )
 
         Logger.logEvent(.receivedConfiguration(mutanusConfiguration))
@@ -63,7 +64,7 @@ extension Entry {
         let configuration = try JSONDecoder().decode(InputConfiguration.self, from: data)
 
         try validateExecutable(configuration.executable)
-        try validateDirectory(configuration.projectPath)
+        try validateDirectory(configuration.projectRoot)
 
         self.configuration = configuration
     }

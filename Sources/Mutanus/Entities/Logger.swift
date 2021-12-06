@@ -83,7 +83,7 @@ private extension Logger {
 
     static func logReceivedParameters(_ parameters: MutanusConfiguration) {
         let content = """
-            directory: \(parameters.projectPath)
+            directory: \(parameters.projectRoot)
             executable: \(parameters.executable)
             arguments: \(parameters.arguments.joined(separator: " "))
         """
