@@ -4,22 +4,6 @@
 
 import Foundation
 
-
-struct MutanusConfiguration: Codable {
-    let executable: String
-    let arguments: [String]
-    let projectPath: String
-    let sourcePaths: [String]
-
-    enum CodingKeys: String, CodingKey {
-        case executable
-        case arguments
-        case projectPath = "project_path"
-        case sourcePaths = "source_paths"
-    }
-}
-
-
 final class Mutanus {
 
     let configuration: MutanusConfiguration
@@ -43,6 +27,7 @@ final class Mutanus {
     }
 
     func start() throws {
+        
         fileManager.changeCurrentDirectoryPath(configuration.projectPath)
         fileManager.createMutanusDirectories()
 

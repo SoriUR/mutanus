@@ -1,52 +1,34 @@
 import Foundation
 import ArgumentParser
 
-struct Entry: ParsableCommand {
+final class Entry: ParsableCommand {
 
     private var fileManager: MutanusFileManger { CustomFileManager() }
+    private var configuration: InputConfiguration?
 
-    @Option(name: .shortAndLong, help: "Path to the configuration file")
-    var configurationPath: String?
-
-    @Option(name: .shortAndLong, help: "Path to the executable")
-    var executable: String?
-
-    @Option(name: .shortAndLong, parsing: .upToNextOption, help: "Arguments for executable", completion: nil)
-    var arguments: [String] = []
-
-    @Option(name: .shortAndLong, help: "Path to the project root")
-    var projectPath: String?
-
-    @Option(name: .shortAndLong, parsing: .upToNextOption, help: "Files to find mutants in", completion: nil)
-    var sourcePaths: [String] = []
+    @Option(name: .shortAndLong, help: "Relative or absolute path to the configuration file")
+    var configurationPath: String
 
     func run() throws {
 
-        let configuration: MutanusConfiguration
-
-        if
-            let configurationPath = configurationPath,
-            let data = fileManager.contents(atPath: configurationPath)
-        {
-            configuration = try JSONDecoder().decode(MutanusConfiguration.self, from: data)
-        } else if let executable = executable {
-            configuration = MutanusConfiguration(
-                executable: executable,
-                arguments: arguments,
-                projectPath: projectPath ?? fileManager.currentDirectoryPath,
-                sourcePaths: sourcePaths
-            )
-        } else {
+        guard let configuration = configuration else {
             fatalError("Neither configuration or executable has beed found")
         }
 
-        Logger.logEvent(.receivedConfiguration(configuration))
+        let mutanusConfiguration = MutanusConfiguration(
+            executable: configuration.executable,
+            arguments: configuration.arguments,
+            projectPath: configuration.projectPath ?? fileManager.currentDirectoryPath,
+            sourcePaths: configuration.sourcePaths ?? ["/"]
+        )
+
+        Logger.logEvent(.receivedConfiguration(mutanusConfiguration))
 
         try Mutanus(
-            configuration: configuration,
-            executor: Executor(configuration: configuration),
+            configuration: mutanusConfiguration,
+            executor: Executor(configuration: mutanusConfiguration),
             fileManager: fileManager,
-            reportCompiler: ReportCompiler(configuration: configuration)
+            reportCompiler: ReportCompiler(configuration: mutanusConfiguration)
         ).start()
     }
 }
@@ -54,23 +36,48 @@ struct Entry: ParsableCommand {
 // MARK: - Validation
 extension Entry {
     func validate() throws {
-        if let configurationPath = configurationPath {
 
-            let (exists, isDirectory) = fileManager.fileExists(atPath: configurationPath)
+        let anyConfigurationPath: String
 
-            guard exists, !isDirectory else {
+        let (exists, isDirectory) = fileManager.fileExists(atPath: configurationPath)
+
+        if exists, !isDirectory {
+            anyConfigurationPath = configurationPath
+        } else {
+            let relativeConfigurationPath = fileManager.currentDirectoryPath + "/\(configurationPath)"
+            let (exists, isDirectory) = fileManager.fileExists(atPath: relativeConfigurationPath)
+
+            if exists, !isDirectory {
+                anyConfigurationPath = relativeConfigurationPath
+            } else {
                 throw ValidationError("Configuration file at given path doesn't exits")
             }
-            return
         }
 
-        try validateDirectory(projectPath)
-        try validateExecutable(executable)
+        guard
+            let data = fileManager.contents(atPath: anyConfigurationPath)
+        else {
+            throw ValidationError("Invalid configuration file data")
+        }
+
+        let configuration = try JSONDecoder().decode(InputConfiguration.self, from: data)
+
+        try validateExecutable(configuration.executable)
+        try validateDirectory(configuration.projectPath)
+
+        self.configuration = configuration
     }
 
     // MARK: - Private
 
+    private func validateExecutable(_ path: String) throws {
+        guard FileManager.default.isExecutableFile(atPath: path) else {
+            throw ValidationError("Executable doesn't exist")
+        }
+    }
+
     private func validateDirectory(_ path: String?) throws {
+
         guard let path = path else { return }
 
         let (exists, isDirectory) = fileManager.fileExists(atPath: path)
@@ -80,16 +87,6 @@ extension Entry {
 
         guard isDirectory else {
             throw ValidationError("Path is not a folder")
-        }
-    }
-
-    private func validateExecutable(_ path: String?) throws {
-        guard let executablePath = executable else {
-            throw ValidationError("Executable has't been specified")
-        }
-
-        guard FileManager.default.isExecutableFile(atPath: executablePath) else {
-            throw ValidationError("Executable doesn't exist")
         }
     }
 }
