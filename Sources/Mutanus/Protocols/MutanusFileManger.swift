@@ -20,6 +20,7 @@ protocol MutanusFileManger {
     func createBackupFile(path: String)
     func restoreFileFromBackup(path: String)
     func createReportFile(contents: Data)
+    func createFile(atPath path: String, contents data: Data)
 }
 
 final class CustomFileManager: FileManager, MutanusFileManger {
@@ -55,6 +56,16 @@ final class CustomFileManager: FileManager, MutanusFileManger {
     func createReportFile(contents: Data) {
         createFile(atPath: mutanusDirectoryPath + "Report.json", contents: contents)
     }
+
+
+    func createConfigurationFile(atPath: String, contents: Data) {
+        createFile(atPath: mutanusDirectoryPath + "Report.json", contents: contents)
+    }
+
+    func createFile(atPath path: String, contents data: Data) {
+        createFile(atPath: path, contents: data, attributes: [:])
+    }
+
 
     // MARK: - Private
 

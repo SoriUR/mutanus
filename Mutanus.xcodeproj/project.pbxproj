@@ -65,7 +65,7 @@
 		OBJ_229 /* Executor.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* Executor.swift */; };
 		OBJ_230 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* Logger.swift */; };
 		OBJ_231 /* MutanusError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* MutanusError.swift */; };
-		OBJ_232 /* Mutanus.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_14 /* Mutanus.swift */; };
+		OBJ_232 /* MutanusHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_14 /* MutanusHelper.swift */; };
 		OBJ_233 /* MutanusFileManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* MutanusFileManger.swift */; };
 		OBJ_234 /* FilesReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_19 /* FilesReport.swift */; };
 		OBJ_235 /* IterationsReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_20 /* IterationsReport.swift */; };
@@ -279,7 +279,7 @@
 		OBJ_137 /* ArgumentDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentDefinition.swift; sourceTree = "<group>"; };
 		OBJ_138 /* ArgumentSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentSet.swift; sourceTree = "<group>"; };
 		OBJ_139 /* CommandParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandParser.swift; sourceTree = "<group>"; };
-		OBJ_14 /* Mutanus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mutanus.swift; sourceTree = "<group>"; };
+		OBJ_14 /* MutanusHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutanusHelper.swift; sourceTree = "<group>"; };
 		OBJ_140 /* InputOrigin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputOrigin.swift; sourceTree = "<group>"; };
 		OBJ_141 /* Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Name.swift; sourceTree = "<group>"; };
 		OBJ_142 /* Parsed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parsed.swift; sourceTree = "<group>"; };
@@ -783,7 +783,7 @@
 			isa = PBXGroup;
 			children = (
 				OBJ_55 /* main.swift */,
-				OBJ_14 /* Mutanus.swift */,
+				OBJ_14 /* MutanusHelper.swift */,
 				4A5CF19E275E2D3C002DE697 /* MutanusConfiguration.swift */,
 				OBJ_9 /* Entities */,
 				OBJ_15 /* Protocols */,
@@ -1089,7 +1089,7 @@
 				OBJ_229 /* Executor.swift in Sources */,
 				OBJ_230 /* Logger.swift in Sources */,
 				OBJ_231 /* MutanusError.swift in Sources */,
-				OBJ_232 /* Mutanus.swift in Sources */,
+				OBJ_232 /* MutanusHelper.swift in Sources */,
 				OBJ_233 /* MutanusFileManger.swift in Sources */,
 				OBJ_234 /* FilesReport.swift in Sources */,
 				OBJ_235 /* IterationsReport.swift in Sources */,

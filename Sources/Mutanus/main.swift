@@ -1,41 +1,86 @@
 import Foundation
 import ArgumentParser
 
-final class Entry: ParsableCommand {
+struct Mutanus: ParsableCommand {
 
-    private var fileManager: MutanusFileManger { CustomFileManager() }
-    private var configuration: InputConfiguration?
+    static let configuration = CommandConfiguration(
+        abstract: "Performs Mutation testing of a Swift project",
+        subcommands: [
+            Run.self,
+            Config.self
+        ]
+    )
 
-    @Option(name: .shortAndLong, help: "Relative or absolute path to the configuration file")
-    var configurationPath: String
+    struct Config: ParsableCommand {
 
-    func run() throws {
+        static let configuration = CommandConfiguration(abstract: "Creates configuration file")
 
-        guard let configuration = configuration else {
-            fatalError("Configuration hasn't been found")
+        private var fileManager: MutanusFileManger { CustomFileManager() }
+
+        @Option(name: .shortAndLong, help: "Path for configuration tempalte to be created at")
+        var path: String?
+
+        func run() throws {
+            let emptyConfiguration = InputConfiguration(
+                executable: "",
+                arguments: [""],
+                projectRoot: "",
+                sourceFiles: [""],
+                excludedFiles: [""]
+            )
+            let data = try JSONEncoder().encode(emptyConfiguration)
+
+            let fileManager: MutanusFileManger = CustomFileManager()
+
+            let outputPath: String
+            if let path = path {
+                outputPath = path
+            } else {
+                outputPath = fileManager.currentDirectoryPath
+            }
+
+            fileManager.createFile(atPath: "\(outputPath)/MutanusConfig.json", contents: data)
         }
+    }
 
-        let mutanusConfiguration = MutanusConfiguration(
-            executable: configuration.executable,
-            arguments: configuration.arguments,
-            projectRoot: configuration.projectRoot ?? fileManager.currentDirectoryPath,
-            sourceFiles: configuration.sourceFiles ?? ["/"],
-            excludedFiles: configuration.excludedFiles ?? []
-        )
 
-        Logger.logEvent(.receivedConfiguration(mutanusConfiguration))
+    final class Run: ParsableCommand {
+        private var fileManager: MutanusFileManger { CustomFileManager() }
+        private var configuration: InputConfiguration?
 
-        try Mutanus(
-            configuration: mutanusConfiguration,
-            executor: Executor(configuration: mutanusConfiguration),
-            fileManager: fileManager,
-            reportCompiler: ReportCompiler(configuration: mutanusConfiguration)
-        ).start()
+        static let configuration = CommandConfiguration(abstract: "Starts Mutation testing")
+
+        @Option(name: .shortAndLong, help: "Relative or absolute path to the configuration file")
+        var configurationPath: String = ""
+
+        func run() throws {
+
+            guard let configuration = configuration else {
+                fatalError("Configuration hasn't been found")
+            }
+
+            let mutanusConfiguration = MutanusConfiguration(
+                executable: configuration.executable,
+                arguments: configuration.arguments,
+                projectRoot: configuration.projectRoot ?? fileManager.currentDirectoryPath,
+                sourceFiles: configuration.sourceFiles ?? ["/"],
+                excludedFiles: configuration.excludedFiles ?? []
+            )
+
+            Logger.logEvent(.receivedConfiguration(mutanusConfiguration))
+
+            try MutanusHelper(
+                configuration: mutanusConfiguration,
+                executor: Executor(configuration: mutanusConfiguration),
+                fileManager: fileManager,
+                reportCompiler: ReportCompiler(configuration: mutanusConfiguration)
+            ).start()
+        }
     }
 }
 
 // MARK: - Validation
-extension Entry {
+extension Mutanus.Run {
     func validate() throws {
 
         let anyConfigurationPath: String
@@ -92,4 +137,4 @@ extension Entry {
     }
 }
 
-Entry.main()
+Mutanus.main()
