@@ -5,9 +5,17 @@ Inspired by [Muter](https://github.com/muter-mutation-testing/muter)
 # Usage
 
  ```
- mutanus -c <path-to-config>
- ```
-## Configuration file
+    mutanus run -c <path-to-config>
+```
+
+# Configuration file
+
+Mutanus retrieves necessary information from the configuration file
+
+You can create configuration file yourself or use following command
+```
+    mutanus config -p <path>
+```
 
 - Required parameters
 

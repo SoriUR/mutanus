@@ -7,11 +7,11 @@ struct Mutanus: ParsableCommand {
         abstract: "Performs Mutation testing of a Swift project",
         subcommands: [
             Run.self,
-            Configuration.self
+            Config.self
         ]
     )
 
-    struct Configuration: ParsableCommand {
+    struct Config: ParsableCommand {
 
         static let configuration = CommandConfiguration(abstract: "Creates configuration file")
 
