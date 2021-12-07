@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class Mutanus {
+final class MutanusHelper {
 
     let configuration: MutanusConfiguration
     let executor: Executor
@@ -79,7 +79,7 @@ final class Mutanus {
 }
 
 // MARK: - MutanusSequanceStepDelegate
-extension Mutanus: MutanusSequanceStepDelegate {
+extension MutanusHelper: MutanusSequanceStepDelegate {
 
     func stepStarted<T: ChainLink>(_ step: T) {
         stepStartDate = Date()
@@ -130,7 +130,7 @@ extension Mutanus: MutanusSequanceStepDelegate {
 }
 
 // MARK: - MutationTestingStepDelegate
-extension Mutanus: MutationTestingStepDelegate {
+extension MutanusHelper: MutationTestingStepDelegate {
     func iterationStated(index: Int) {
         Logger.logEvent(.mutationIterationStarted(index: index+1))
     }
@@ -144,7 +144,7 @@ extension Mutanus: MutationTestingStepDelegate {
 }
 
 // MARK: - Private
-private extension Mutanus {
+private extension MutanusHelper {
     func handleReferenceStepResult(_ result: ReferenceRunStep.Result) throws {
         Logger.logEvent(.referenceRunFinished(result: result))
 

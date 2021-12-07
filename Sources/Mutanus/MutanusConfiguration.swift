@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct InputConfiguration: Decodable {
+struct InputConfiguration: Codable {
     let executable: String
     let arguments: [String]
     let projectRoot: String?
