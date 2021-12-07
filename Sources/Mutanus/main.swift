@@ -21,6 +21,25 @@ struct Mutanus: ParsableCommand {
         var path: String?
 
         func run() throws {
+            let emptyConfiguration = InputConfiguration(
+                executable: "",
+                arguments: [""],
+                projectRoot: "",
+                sourceFiles: [""],
+                excludedFiles: [""]
+            )
+            let data = try JSONEncoder().encode(emptyConfiguration)
+
+            let fileManager: MutanusFileManger = CustomFileManager()
+
+            let outputPath: String
+            if let path = path {
+                outputPath = path
+            } else {
+                outputPath = fileManager.currentDirectoryPath
+            }
+
+            fileManager.createFile(atPath: "\(outputPath)/MutanusConfig.json", contents: data)
         }
     }
 
