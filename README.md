@@ -1,11 +1,16 @@
-# Mutanus
 Command line tool written in Swift dedicated to perform Mutation Testing of your Swift project.
 Inspired by [Muter](https://github.com/muter-mutation-testing/muter)
 
+# Installation
+
+```
+brew install soriur/brew/mutanus
+```
+
 # Usage
 
- ```
-    mutanus run -c <path-to-config>
+```
+mutanus run -c <path-to-config>
 ```
 
 # Configuration file
@@ -14,7 +19,7 @@ Mutanus retrieves necessary information from the configuration file
 
 You can create configuration file yourself or use following command
 ```
-    mutanus config -p <path>
+mutanus config -p <path>
 ```
 
 - Required parameters
@@ -22,7 +27,7 @@ You can create configuration file yourself or use following command
   - **executable** - used for builing your project 
   - **arguments** - array of executable arguments to run tests of your project
  
-- Required parameters
+- Optional parameters
 
   - **project_root** - path to the root of your project. Current directory is used if not present
   - **source_files** - array of relative to **project_root** paths  of files or/and folders. Listed sources are used for mutants search. All files in **project_root** are used if not present
