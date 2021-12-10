@@ -26,7 +26,8 @@ struct Mutanus: ParsableCommand {
                 arguments: [""],
                 projectRoot: "",
                 sourceFiles: [""],
-                excludedFiles: [""]
+                excludedFiles: [""],
+                options: [.verificationRun]
             )
             let data = try JSONEncoder().encode(emptyConfiguration)
 
@@ -64,7 +65,8 @@ struct Mutanus: ParsableCommand {
                 arguments: configuration.arguments,
                 projectRoot: configuration.projectRoot ?? fileManager.currentDirectoryPath,
                 sourceFiles: configuration.sourceFiles ?? ["/"],
-                excludedFiles: configuration.excludedFiles ?? []
+                excludedFiles: configuration.excludedFiles ?? [],
+                options: configuration.options ?? []
             )
 
             Logger.logEvent(.receivedConfiguration(mutanusConfiguration))
