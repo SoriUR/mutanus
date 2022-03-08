@@ -26,12 +26,12 @@ struct MutationTestingIterationReport {
 }
 
 
-protocol MutationTestingStepDelegate: MutanusSequanceStepDelegate {
+protocol MutationTestingStepDelegate: MutanusSequenceStepDelegate {
     func iterationStated(index: Int)
     func iterationFinished(duration: TimeInterval, result: ExecutionReport)
 }
 
-final class MutationTestingStep: MutanusSequanceStep {
+final class MutationTestingStep: MutanusSequenceStep {
 
     let executor: Executor
     let resultParser: MutationResultParser
@@ -54,12 +54,12 @@ final class MutationTestingStep: MutanusSequanceStep {
         self.reportCompiler = reportCompiler
     }
 
-    // MARK: - MutanusSequanceStep
+    // MARK: - MutanusSequenceStep
 
     typealias Context = MutantsInfo
     typealias Result = MutationTestingResult
 
-    var delegate: MutanusSequanceStepDelegate? { stepDelegate }
+    var delegate: MutanusSequenceStepDelegate? { stepDelegate }
     var next: AnyPerformsAction<Result>?
 
     func executeStep(_ context: Context) throws -> Result {

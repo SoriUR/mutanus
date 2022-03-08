@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class CalculateDutationStep<C>: MutanusSequanceStep {
+final class CalculateDutationStep<C>: MutanusSequenceStep {
 
     let startTime: Date
     let reportCompiler: ReportCompiler
@@ -12,19 +12,19 @@ final class CalculateDutationStep<C>: MutanusSequanceStep {
     init(
         startTime: Date,
         reportCompiler: ReportCompiler,
-        delegate: MutanusSequanceStepDelegate?
+        delegate: MutanusSequenceStepDelegate?
     ) {
         self.reportCompiler = reportCompiler
         self.startTime = startTime
         self.delegate = delegate
     }
 
-    // MARK: - MutanusSequanceStep
+    // MARK: - MutanusSequenceStep
 
     typealias Context = C
     typealias Result = Void
 
-    var delegate: MutanusSequanceStepDelegate?
+    var delegate: MutanusSequenceStepDelegate?
     var next: AnyPerformsAction<Result>?
 
     func executeStep(_ context: Context) throws -> Result {

@@ -78,8 +78,8 @@ final class MutanusHelper {
     }
 }
 
-// MARK: - MutanusSequanceStepDelegate
-extension MutanusHelper: MutanusSequanceStepDelegate {
+// MARK: - MutanusSequenceStepDelegate
+extension MutanusHelper: MutanusSequenceStepDelegate {
 
     func stepStarted<T: ChainLink>(_ step: T) {
         stepStartDate = Date()

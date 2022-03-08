@@ -4,25 +4,25 @@
 
 import Foundation
 
-final class BackupFilesStep: MutanusSequanceStep {
+final class BackupFilesStep: MutanusSequenceStep {
 
     let fileManager: MutanusFileManger
 
     init(
         fileManager: MutanusFileManger,
-        delegate: MutanusSequanceStepDelegate
+        delegate: MutanusSequenceStepDelegate
     ) {
         self.fileManager = fileManager
         self.delegate = delegate
     }
 
-    // MARK: - MutanusSequanceStep
+    // MARK: - MutanusSequenceStep
 
     typealias Context = MutantsInfo
     typealias Result = MutantsInfo
 
     var next: AnyPerformsAction<Result>?
-    weak var delegate: MutanusSequanceStepDelegate?
+    weak var delegate: MutanusSequenceStepDelegate?
 
     func executeStep(_ context: Context) throws -> Result {
         for path in context.mutants.keys {

@@ -8,25 +8,25 @@
 import Foundation
 import SwiftSyntax
 
-final class FindMutantsStep: MutanusSequanceStep {
+final class FindMutantsStep: MutanusSequenceStep {
 
     let reportCompiler: ReportCompiler
 
     init(
         reportCompiler: ReportCompiler,
-        delegate: MutanusSequanceStepDelegate?
+        delegate: MutanusSequenceStepDelegate?
     ) {
         self.reportCompiler = reportCompiler
         self.delegate = delegate
     }
 
-    // MARK: - MutanusSequanceStep
+    // MARK: - MutanusSequenceStep
 
     typealias Context = [String]
     typealias Result = MutantsInfo
 
     var next: AnyPerformsAction<Result>?
-    weak var delegate: MutanusSequanceStepDelegate?
+    weak var delegate: MutanusSequenceStepDelegate?
 
     func executeStep(_ context: Context) throws -> Result {
         var result = [String: (SourceFileSyntax, [MutationPoint])]()

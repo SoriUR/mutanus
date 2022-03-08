@@ -17,7 +17,7 @@ struct Mutanus: ParsableCommand {
 
         private var fileManager: MutanusFileManger { CustomFileManager() }
 
-        @Option(name: .shortAndLong, help: "Path for configuration tempalte to be created at")
+        @Option(name: .shortAndLong, help: "Path for configuration template to be created at")
         var path: String?
 
         func run() throws {
@@ -25,8 +25,10 @@ struct Mutanus: ParsableCommand {
                 executable: "",
                 arguments: [""],
                 projectRoot: "",
-                sourceFiles: [""],
+                includedFiles: [""],
+                includedRules: [""],
                 excludedFiles: [""],
+                excludedRules: [""],
                 options: [.verificationRun]
             )
             let data = try JSONEncoder().encode(emptyConfiguration)
@@ -52,7 +54,7 @@ struct Mutanus: ParsableCommand {
         static let configuration = CommandConfiguration(abstract: "Starts Mutation testing")
 
         @Option(name: .shortAndLong, help: "Relative or absolute path to the configuration file")
-        var configurationPath: String = ""
+        var configurationPath: String
 
         func run() throws {
 
@@ -64,8 +66,10 @@ struct Mutanus: ParsableCommand {
                 executable: configuration.executable,
                 arguments: configuration.arguments,
                 projectRoot: configuration.projectRoot ?? fileManager.currentDirectoryPath,
-                sourceFiles: configuration.sourceFiles ?? ["/"],
+                includedFiles: configuration.includedFiles ?? [],
+                includedRules: configuration.includedRules ?? [],
                 excludedFiles: configuration.excludedFiles ?? [],
+                excludedRules: configuration.excludedRules ?? [],
                 options: configuration.options ?? []
             )
 

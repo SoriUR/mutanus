@@ -5,7 +5,7 @@
 import SwiftSyntax
 import Foundation
 
-final class PublishReportStep: MutanusSequanceStep {
+final class PublishReportStep: MutanusSequenceStep {
 
     let reportCompiler: ReportCompiler
     let fileManager: MutanusFileManger
@@ -13,19 +13,19 @@ final class PublishReportStep: MutanusSequanceStep {
     init(
         reportCompiler: ReportCompiler,
         fileManager: MutanusFileManger,
-        delegate: MutanusSequanceStepDelegate?
+        delegate: MutanusSequenceStepDelegate?
     ) {
         self.fileManager = fileManager
         self.reportCompiler = reportCompiler
         self.delegate = delegate
     }
 
-    // MARK: - MutanusSequanceStep
+    // MARK: - MutanusSequenceStep
 
     typealias Context = Void
     typealias Result = Void
 
-    weak var delegate: MutanusSequanceStepDelegate?
+    weak var delegate: MutanusSequenceStepDelegate?
     var next: AnyPerformsAction<Result>?
 
     func executeStep(_ context: Context) throws -> Result {
