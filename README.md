@@ -17,7 +17,7 @@ mutanus run -c <path-to-config>
 
 Mutanus retrieves necessary information from the configuration file
 
-You can create configuration file yourself or use following command
+You can create configuration file yourself or use the following command
 ```
 mutanus config -p <path>
 ```
@@ -30,7 +30,14 @@ mutanus config -p <path>
 - Optional parameters
 
   - **project_root** - path to the root of your project. Current directory is used if not present
-  - **source_files** - array of relative to **project_root** paths  of files or/and folders. Listed sources are used for mutants search. All files in **project_root** are used if not present
+  - **included_files** - exact paths to files or folders that should be included
+  - **included_rules** - ICU-compatible reg exps that should match included files
+  - **excluded_files** - exact paths to files or folders that should be excluded
+  - **excluded_rules** - ICU-compatible reg exps that should match excluded files
+  
+- Including/Excluding rules
+
+Excluding parameters take priority over including parameters. In other words, if a file matches both including and excluding parameter, it will be excluded.
 
 ```json
 { 
@@ -47,14 +54,22 @@ mutanus config -p <path>
     "GCC_TREAT_WARNINGS_AS_ERRORS=NO"
   ],
   "project_root": "<path-to-project>",
-  "source_files": [ 
+  "included_files": [ 
     "<path-to-first-file>",
     "<path-to-second-file>",
     "<path-to-folder>",
   ],
+  "included_rules": [
+    "<first-including-rule>",
+    "<second-including-rule>",
+  ],
   "excluded_files": [
     "<first-exclude-rule>",
     "<second-exclude-rule>",
+  ],
+  "excluded_rules": [
+    "<first-excluding-rule>",
+    "<second-excluding-rule>",
   ]
 }
 ```
