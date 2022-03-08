@@ -38,6 +38,7 @@ mutanus config -p <path>
 - Including/Excluding rules
 
 Excluding parameters take priority over including parameters. In other words, if a file matches both including and excluding parameter, it will be excluded.
+If both **included_files** and **included_rules** are empty or missing, all files at **project_root** are used
 
 ```json
 { 

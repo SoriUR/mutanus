@@ -60,7 +60,7 @@ private extension ExtractSourceFilesStep {
 
     func extractIncludedFiles(from sources: [String]) -> [String] {
 
-        guard !configuration.includedFiles.isEmpty && !configuration.includedRules.isEmpty else {
+        guard !configuration.includedFiles.isEmpty || !configuration.includedRules.isEmpty else {
             return sources
         }
 
