@@ -39,17 +39,14 @@ final class ExtractSourceFilesStep: MutanusSequenceStep {
 private extension ExtractSourceFilesStep {
 
     func extractNotExcludedFiles() -> [String] {
-        let allSources = extractSources(at: "/")
+        return extractSources(at: "/").compactMap { path in
 
-        var result = Array<String>()
-        result.reserveCapacity(allSources.count)
-
-        return allSources.compactMap { path in
-
+            // Исключаем, если есть в excludedFiles
             for excludedPath in configuration.excludedFiles {
                 if path.contains(excludedPath) { return nil }
             }
 
+            // Исключаем, если подходит под excludedRules
             for rule in configuration.excludedRules {
                 if path.range(of: rule, options: .regularExpression) != nil { return nil }
             }
@@ -60,15 +57,19 @@ private extension ExtractSourceFilesStep {
 
     func extractIncludedFiles(from sources: [String]) -> [String] {
 
+        // Если нет правил, то возвращаем все
         guard !configuration.includedFiles.isEmpty || !configuration.includedRules.isEmpty else {
             return sources
         }
 
         return sources.compactMap { path in
+
+            // Добавляем, если в includedFiles
             for includedPath in configuration.includedFiles {
                 if path.contains(includedPath) { return path }
             }
 
+            // Добавляем, если подходит под includedRules
             for rule in configuration.includedRules {
                 if path.range(of: rule, options: .regularExpression) != nil { return path }
             }
