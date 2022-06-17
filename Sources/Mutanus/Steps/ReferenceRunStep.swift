@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ReferenceRunStep: MutanusSequanceStep {
+final class ReferenceRunStep: MutanusSequenceStep {
     let executor: Executor
     let resultParser: ExecutionResultParser
     let fileManager: MutanusFileManger
@@ -13,7 +13,7 @@ final class ReferenceRunStep: MutanusSequanceStep {
         executor: Executor,
         fileManager: MutanusFileManger,
         resultParser: ExecutionResultParser,
-        delegate: MutanusSequanceStepDelegate?
+        delegate: MutanusSequenceStepDelegate?
     ) {
         self.fileManager = fileManager
         self.executor = executor
@@ -21,13 +21,13 @@ final class ReferenceRunStep: MutanusSequanceStep {
         self.delegate = delegate
     }
 
-    // MARK: - MutanusSequanceStep
+    // MARK: - MutanusSequenceStep
 
     typealias Context = Void
     typealias Result = ExecutionResult
 
     var next: AnyPerformsAction<Result>?
-    weak var delegate: MutanusSequanceStepDelegate?
+    weak var delegate: MutanusSequenceStepDelegate?
 
     func executeStep(_ context: Context) throws -> Result {
 

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ExtractSourceFilesStep: MutanusSequanceStep {
+final class ExtractSourceFilesStep: MutanusSequenceStep {
 
     typealias Context = ExecutionResult
     typealias Result = [String]
@@ -15,42 +15,79 @@ final class ExtractSourceFilesStep: MutanusSequanceStep {
     init(
         fileManager: MutanusFileManger,
         configuration: MutanusConfiguration,
-        delegate: MutanusSequanceStepDelegate?
+        delegate: MutanusSequenceStepDelegate?
     ) {
         self.fileManager = fileManager
         self.configuration = configuration
         self.delegate = delegate
     }
 
-    // MARK: - MutanusSequanceStep
+    // MARK: - MutanusSequenceStep
 
     var next: AnyPerformsAction<Result>?
-    weak var delegate: MutanusSequanceStepDelegate?
+    weak var delegate: MutanusSequenceStepDelegate?
 
     func executeStep(_ context: Context) throws -> Result {
-        var sourceFiles = [String]()
+        let notExcluded = extractNotExcludedFiles()
+        let includedAndNotExcluded = extractIncludedFiles(from: notExcluded)
 
-        configuration.sourceFiles.forEach {
-            let path = configuration.projectRoot + $0
-            let (exists, isDirectory) = fileManager.fileExists(atPath: path)
+        return includedAndNotExcluded
+    }
+}
 
-            guard exists else { return }
+// MARK: - Private
+private extension ExtractSourceFilesStep {
 
-            let paths: [String] = isDirectory
-                ? (fileManager.subpaths(atPath: path) ?? []).map { path + $0 }
-                : [path]
+    func extractNotExcludedFiles() -> [String] {
+        return extractSources(at: "/").compactMap { path in
 
-            let filteredPaths = paths
-                .filter { $0.hasSuffix(".swift") }
-                .filter { path in
-                    configuration.excludedFiles.reduce(true) { result, current in
-                        return result && path.range(of: current, options: .regularExpression) == nil
-                    }
-                }
+            // Исключаем, если есть в excludedFiles
+            for excludedPath in configuration.excludedFiles {
+                if path.contains(excludedPath) { return nil }
+            }
 
-            sourceFiles.append(contentsOf: filteredPaths)
+            // Исключаем, если подходит под excludedRules
+            for rule in configuration.excludedRules {
+                if path.range(of: rule, options: .regularExpression) != nil { return nil }
+            }
+
+            return path
+        }
+    }
+
+    func extractIncludedFiles(from sources: [String]) -> [String] {
+
+        // Если нет правил, то возвращаем все
+        guard !configuration.includedFiles.isEmpty || !configuration.includedRules.isEmpty else {
+            return sources
         }
 
-        return sourceFiles
+        return sources.compactMap { path in
+
+            // Добавляем, если в includedFiles
+            for includedPath in configuration.includedFiles {
+                if path.contains(includedPath) { return path }
+            }
+
+            // Добавляем, если подходит под includedRules
+            for rule in configuration.includedRules {
+                if path.range(of: rule, options: .regularExpression) != nil { return path }
+            }
+
+            return nil
+        }
+    }
+
+    func extractSources(at subPath: String) -> [String] {
+        let path = configuration.projectRoot + subPath
+        let (exists, isDirectory) = fileManager.fileExists(atPath: path)
+
+        guard exists else { return [] }
+
+        let paths: [String] = isDirectory
+            ? (fileManager.subpaths(atPath: path) ?? []).map { path + $0 }
+            : [path]
+
+        return paths.filter { $0.hasSuffix(".swift") }
     }
 }
