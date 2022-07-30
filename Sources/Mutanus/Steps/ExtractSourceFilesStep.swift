@@ -25,6 +25,7 @@ final class ExtractSourceFilesStep: MutanusSequenceStep {
     // MARK: - MutanusSequenceStep
 
     var next: AnyPerformsAction<Result>?
+
     weak var delegate: MutanusSequenceStepDelegate?
 
     func executeStep(_ context: Context) throws -> Result {

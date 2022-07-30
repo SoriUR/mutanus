@@ -21,6 +21,11 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		8CD5F2C42895D00E00C4C48C /* ConfigValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD5F2C32895D00E00C4C48C /* ConfigValidator.swift */; };
+		8CD5F2C82895DB0800C4C48C /* PathValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD5F2C72895DB0800C4C48C /* PathValidator.swift */; };
+		8CEC06BC27D758ED0048BCB7 /* Mutanus+Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEC06BB27D758ED0048BCB7 /* Mutanus+Run.swift */; };
+		8CEC06BE27D7596D0048BCB7 /* Mutanus+CreateConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEC06BD27D7596D0048BCB7 /* Mutanus+CreateConfig.swift */; };
+		8CEC06C027D759E50048BCB7 /* Mutanus+ExtractSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEC06BF27D759E50048BCB7 /* Mutanus+ExtractSources.swift */; };
 		OBJ_176 /* BashCompletionsGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_116 /* BashCompletionsGenerator.swift */; };
 		OBJ_177 /* CompletionsGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_117 /* CompletionsGenerator.swift */; };
 		OBJ_178 /* FishCompletionsGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_118 /* FishCompletionsGenerator.swift */; };
@@ -242,6 +247,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8CD5F2C32895D00E00C4C48C /* ConfigValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigValidator.swift; sourceTree = "<group>"; };
+		8CD5F2C72895DB0800C4C48C /* PathValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathValidator.swift; sourceTree = "<group>"; };
+		8CEC06BB27D758ED0048BCB7 /* Mutanus+Run.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Mutanus+Run.swift"; sourceTree = "<group>"; };
+		8CEC06BD27D7596D0048BCB7 /* Mutanus+CreateConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Mutanus+CreateConfig.swift"; sourceTree = "<group>"; };
+		8CEC06BF27D759E50048BCB7 /* Mutanus+ExtractSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Mutanus+ExtractSources.swift"; sourceTree = "<group>"; };
 		"Mutanus::Mutanus::Product" /* Mutanus */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mutanus; sourceTree = BUILT_PRODUCTS_DIR; };
 		"Mutanus::MutanusTests::Product" /* MutanusTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = MutanusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* ExecutionResultParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionResultParser.swift; sourceTree = "<group>"; };
@@ -432,6 +442,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8CD5F2C22895C84D00C4C48C /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				8CEC06BB27D758ED0048BCB7 /* Mutanus+Run.swift */,
+				8CEC06BD27D7596D0048BCB7 /* Mutanus+CreateConfig.swift */,
+				8CEC06BF27D759E50048BCB7 /* Mutanus+ExtractSources.swift */,
+			);
+			path = Commands;
+			sourceTree = "<group>";
+		};
 		OBJ_105 /* SwiftSyntaxBuilder */ = {
 			isa = PBXGroup;
 			children = (
@@ -582,6 +602,8 @@
 		OBJ_16 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				8CD5F2C32895D00E00C4C48C /* ConfigValidator.swift */,
+				8CD5F2C72895DB0800C4C48C /* PathValidator.swift */,
 				OBJ_17 /* MutanusFileManger.swift */,
 			);
 			path = Protocols;
@@ -691,7 +713,7 @@
 			path = Operators;
 			sourceTree = "<group>";
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -703,7 +725,6 @@
 				OBJ_169 /* LICENSE */,
 				OBJ_170 /* README.md */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_57 /* Tests */ = {
@@ -783,14 +804,15 @@
 		OBJ_8 /* Mutanus */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_9 /* Entities */,
+				OBJ_56 /* main.swift */,
+				8CD5F2C22895C84D00C4C48C /* Commands */,
 				OBJ_14 /* MutanusConfiguration.swift */,
 				OBJ_15 /* MutanusHelper.swift */,
+				OBJ_9 /* Entities */,
 				OBJ_16 /* Protocols */,
 				OBJ_18 /* Report */,
 				OBJ_25 /* Steps */,
 				OBJ_39 /* ThirdParty */,
-				OBJ_56 /* main.swift */,
 			);
 			name = Mutanus;
 			path = Sources/Mutanus;
@@ -1010,7 +1032,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_161 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1096,6 +1118,7 @@
 				OBJ_235 /* FilesReport.swift in Sources */,
 				OBJ_236 /* IterationsReport.swift in Sources */,
 				OBJ_237 /* Report.swift in Sources */,
+				8CEC06C027D759E50048BCB7 /* Mutanus+ExtractSources.swift in Sources */,
 				OBJ_238 /* ReportMutation.swift in Sources */,
 				OBJ_239 /* ReportCompiler.swift in Sources */,
 				OBJ_240 /* BackupFilesStep.swift in Sources */,
@@ -1117,11 +1140,15 @@
 				OBJ_256 /* MutationPosition.swift in Sources */,
 				OBJ_257 /* Nullable.swift in Sources */,
 				OBJ_258 /* SourceInfo.swift in Sources */,
+				8CEC06BE27D7596D0048BCB7 /* Mutanus+CreateConfig.swift in Sources */,
 				OBJ_259 /* ChangeLogicalConnectorOperator.swift in Sources */,
+				8CD5F2C42895D00E00C4C48C /* ConfigValidator.swift in Sources */,
 				OBJ_260 /* MutationOperator.swift in Sources */,
+				8CEC06BC27D758ED0048BCB7 /* Mutanus+Run.swift in Sources */,
 				OBJ_261 /* OperatorAwareRewriter.swift in Sources */,
 				OBJ_262 /* ROROperator.swift in Sources */,
 				OBJ_263 /* RemoveSideEffectsOperator.swift in Sources */,
+				8CD5F2C82895DB0800C4C48C /* PathValidator.swift in Sources */,
 				OBJ_264 /* TokenAwareVisitor.swift in Sources */,
 				OBJ_265 /* main.swift in Sources */,
 			);
