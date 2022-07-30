@@ -14,6 +14,8 @@ protocol MutanusFileManger {
     func contents(atPath path: String) -> Data?
     func subpaths(atPath path: String) -> [String]?
 
+    func isExecutableFile(atPath path: String) -> Bool
+
     func createMutanusDirectories()
     func createLogFile(name: String) -> URL
     func fileExists(atPath path: String) -> (exists: Bool, isDirectory: Bool)
@@ -24,6 +26,7 @@ protocol MutanusFileManger {
 }
 
 final class CustomFileManager: FileManager, MutanusFileManger {
+
     func createMutanusDirectories() {
         createDirectory(atPath: logsDirectoryPath)
         createDirectory(atPath: backupsDirectoryPath)
@@ -65,7 +68,6 @@ final class CustomFileManager: FileManager, MutanusFileManger {
     func createFile(atPath path: String, contents data: Data) {
         createFile(atPath: path, contents: data, attributes: [:])
     }
-
 
     // MARK: - Private
 
