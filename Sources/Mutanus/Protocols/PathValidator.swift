@@ -26,6 +26,6 @@ extension PathValidator {
             return relativeConfigurationPath
         }
 
-        throw ValidationError("Configuration file doesn't exits at given path")
+        throw ValidationError("File doesn't exits at: \(path)")
     }
 }

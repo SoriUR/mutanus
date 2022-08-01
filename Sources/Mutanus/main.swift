@@ -11,7 +11,8 @@ struct Mutanus: ParsableCommand {
         subcommands: [
             Run.self,
             CreateConfig.self,
-            ExtractSources.self
+            ExtractSources.self,
+            FindMutants.self
         ]
     )
 }
