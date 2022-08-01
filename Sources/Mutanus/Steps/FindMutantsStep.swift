@@ -7,14 +7,15 @@
 
 import Foundation
 import SwiftSyntax
+import SwiftSyntaxParser
 
 final class FindMutantsStep: MutanusSequenceStep {
 
-    let reportCompiler: ReportCompiler
+    let reportCompiler: ReportCompiler?
 
     init(
-        reportCompiler: ReportCompiler,
-        delegate: MutanusSequenceStepDelegate?
+        reportCompiler: ReportCompiler? = nil,
+        delegate: MutanusSequenceStepDelegate? = nil
     ) {
         self.reportCompiler = reportCompiler
         self.delegate = delegate
@@ -62,7 +63,7 @@ final class FindMutantsStep: MutanusSequenceStep {
             maxFileCount: maxCount
         )
 
-        reportCompiler.extractedSources(info)
+        reportCompiler?.extractedSources(info)
 
         return info
     }
@@ -82,8 +83,7 @@ final class FindMutantsStep: MutanusSequenceStep {
     }
 
     private func filePositionOrder(lhs: MutationPoint, rhs: MutationPoint) -> Bool {
-        return lhs.position.line < rhs.position.line &&
-            lhs.position.column < rhs.position.column
+        return lhs.position.line < rhs.position.line && lhs.position.column < rhs.position.column
     }
 }
 

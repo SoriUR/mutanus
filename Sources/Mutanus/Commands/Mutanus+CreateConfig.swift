@@ -12,7 +12,7 @@ extension Mutanus {
 
         private var fileManager: MutanusFileManger { CustomFileManager() }
 
-        @Option(name: .shortAndLong, help: "Path for configuration template to be created at")
+        @Argument(help: "Path for configuration template to be created at")
         var path: String?
 
         func run() throws {

@@ -8,7 +8,7 @@ import ArgumentParser
 extension Mutanus {
     final class ExtractSources: ParsableCommand, PathValidator, ConfigValidator {
 
-        static let configuration = CommandConfiguration(abstract: "Extracts sources for given configuration or ")
+        static let configuration = CommandConfiguration(abstract: "Extracts sources for given configuration")
         var fileManager: MutanusFileManger { CustomFileManager() }
 
         @Option(name: .shortAndLong, help: "Relative or absolute path to the configuration file")
@@ -23,36 +23,9 @@ extension Mutanus {
             _ = try ExtractSourceFilesStep(
                 fileManager: fileManager,
                 configuration: configuration,
-                delegate: self
-            ).perform(.testSucceeded)
+                delegate: nil
+            ).executeStep(.testSucceeded)
         }
-    }
-}
-
-extension Mutanus.ExtractSources : MutanusSequenceStepDelegate {
-    func stepStarted<T: ChainLink>(_ step: T) {
-        switch step {
-        case is ExtractSourceFilesStep:
-            Logger.logEvent(.sourceFilesStarted)
-        default:
-            break
-        }
-    }
-
-    func stepFinished<T: ChainLink>(_ step: T, result: T.Result) throws {
-
-        switch step {
-        case is ExtractSourceFilesStep:
-            try handleSourcesStepResult(result as! ExtractSourceFilesStep.Result)
-        default:
-            break
-        }
-    }
-
-    func handleSourcesStepResult(_ result: ExtractSourceFilesStep.Result) throws {
-        Logger.logEvent(.sourceFilesFinished(sources: result))
-
-        guard !result.isEmpty else { throw MutanusError.emptySources }
     }
 }
 
